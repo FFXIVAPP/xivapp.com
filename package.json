@@ -44,7 +44,8 @@
     "request-promise": "^4.1.1",
     "rotating-file-stream": "^1.0.5",
     "uuid": "^2.0.3",
-    "vision": "^4.1.0"
+    "vision": "^4.1.0",
+    "zlib": "^1.0.5"
   },
   "devDependencies": {
     "babel-eslint": "^7.0.0",

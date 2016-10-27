@@ -14,6 +14,7 @@ const Limiter = require('./plugins/limiter/');
 
 const fs = require('fs');
 const path = require('path');
+const Zlib = require('zlib');
 
 const CONTROLLER_PATH = './controllers/';
 
@@ -90,7 +91,16 @@ module.exports = function (startServer = true) {
   });
   server.connection({
     host: '0.0.0.0',
-    port: 10000
+    port: 10000,
+    routes: {
+      payload: {
+        compression: {
+          special: {
+            chunkSize: 16 * 1024
+          }
+        }
+      }
+    }
   });
   const plugins = [{
     register: Good,
@@ -128,6 +138,8 @@ module.exports = function (startServer = true) {
         require(path.resolve(__dirname, CONTROLLER_PATH, file)).setupRoutes(server); // eslint-disable-line global-require
       });
     });
+
+    server.decoder('special', (options) => Zlib.createGunzip(options));
 
     if (startServer) {
       const dataService = new DataService({
