@@ -1,13 +1,13 @@
 const Mongoose = require('mongoose');
 const Schema = Mongoose.Schema;
 
-let Offset = null;
+let Signature = null;
 
 const defaults = require('../defaults.js');
 const indexed = defaults.indexed;
 const unique = defaults.unique;
 
-const offsetSchema = new Schema({
+const signatureSchema = new Schema({
   _id: defaults.guid(),
   v: {
     type: Number,
@@ -39,14 +39,14 @@ module.exports = function ({
   models,
   connection
 }) {
-  if (!Offset) {
+  if (!Signature) {
     if (!models) {
       throw new Error('models required');
     }
     if (!connection) {
       throw new Error('connection required');
     }
-    Offset = connection.model('offset', offsetSchema);
+    Signature = connection.model('signature', signatureSchema);
   }
-  return Offset;
+  return Signature;
 };

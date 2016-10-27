@@ -8,8 +8,8 @@ const setupRoutes = (server) => {
     Key
   }, next) => {
     if (Key) {
-      if (global.DB.Offset) {
-        global.DB.Offset.findOne({
+      if (global.DB.Signature) {
+        global.DB.Signature.findOne({
           patchVersion,
           platform,
           Key
@@ -25,7 +25,7 @@ const setupRoutes = (server) => {
         process.nextTick(() => next());
       }
     } else {
-      global.DB.Offset.find({
+      global.DB.Signature.find({
         patchVersion,
         platform
       }, {
@@ -56,10 +56,10 @@ const setupRoutes = (server) => {
 
   server.route({
     method: 'GET',
-    path: '/api/offsets',
+    path: '/api/signatures',
     config: {
       tags: ['api'],
-      description: 'Memory offsets by platform version and platform.',
+      description: 'Memory signatures by platform version and platform.',
       validate: {
         query: {
           patchVersion: Joi.string().valid(global.Config.PatchVersions).default(global.Config.PatchVersions[0]),
@@ -80,13 +80,13 @@ const setupRoutes = (server) => {
 
   server.route({
     method: 'GET',
-    path: '/api/offsets/{Key}',
+    path: '/api/signatures/{Key}',
     config: {
       tags: ['api'],
-      description: 'Memory offsets by platform version and platform.',
+      description: 'Memory signatures by platform version and platform.',
       validate: {
         params: {
-          Key: Joi.string().valid(global.Config.OffsetKeys)
+          Key: Joi.string().valid(global.Config.SignatureKeys)
         },
         query: {
           patchVersion: Joi.string().valid(global.Config.PatchVersions).default(global.Config.PatchVersions[0]),
@@ -110,10 +110,10 @@ const setupRoutes = (server) => {
 
   server.route({
     method: 'POST',
-    path: '/api/offsets',
+    path: '/api/signatures',
     config: {
       tags: ['api'],
-      description: 'Memory offsets created for patch version and platform by type.',
+      description: 'Memory signatures created for patch version and platform by type.',
       validate: {
         query: {
           appID: Joi.string().guid().required()
@@ -121,7 +121,7 @@ const setupRoutes = (server) => {
         payload: {
           patchVersion: Joi.string().min(1).required(),
           platform: Joi.string().valid(global.Config.Platforms).default('x86').required(),
-          Key: Joi.string().valid(global.Config.OffsetKeys)
+          Key: Joi.string().valid(global.Config.SignatureKeys)
         }
       },
       handler: (request, reply) => {
@@ -134,7 +134,7 @@ const setupRoutes = (server) => {
           Key
         } = request.payload;
         const keyedIndex = `${patchVersion}-${platform}-${Key}`;
-        global.DB.Offset.create({
+        global.DB.Signature.create({
           ...request.payload,
           keyedIndex
         }, (err, saved) => {
@@ -151,10 +151,10 @@ const setupRoutes = (server) => {
 
   server.route({
     method: 'PATCH',
-    path: '/api/offsets',
+    path: '/api/signatures',
     config: {
       tags: ['api'],
-      description: 'Memory offsets to update for patch version and platform by type.',
+      description: 'Memory signatures to update for patch version and platform by type.',
       validate: {
         query: {
           appID: Joi.string().guid().required()
@@ -162,7 +162,7 @@ const setupRoutes = (server) => {
         payload: {
           patchVersion: Joi.string().min(1).required(),
           platform: Joi.string().valid(global.Config.Platforms).default('x86').required(),
-          Key: Joi.string().valid(global.Config.OffsetKeys)
+          Key: Joi.string().valid(global.Config.SignatureKeys)
         }
       },
       handler: (request, reply) => {
@@ -175,7 +175,7 @@ const setupRoutes = (server) => {
           Key
         } = request.payload;
         const keyedIndex = `${patchVersion}-${platform}-${Key}`;
-        global.DB.Offset.findOneAndUpdate({
+        global.DB.Signature.findOneAndUpdate({
           patchVersion,
           platform,
           Key
