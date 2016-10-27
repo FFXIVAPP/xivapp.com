@@ -51,7 +51,7 @@ global.Config = {
     'StatusEntry',
     'EnmityEntry'
   ],
-  OffsetKeys: [
+  SignatureKeys: [
     'GAMEMAIN',
     'TARGET',
     'CHATLOG',
