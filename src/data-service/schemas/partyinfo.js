@@ -1,13 +1,13 @@
 const Mongoose = require('mongoose');
 const Schema = Mongoose.Schema;
 
-let Party = null;
+let PartyInfo = null;
 
 const defaults = require('../defaults.js');
 const indexed = defaults.indexed;
 const unique = defaults.unique;
 
-const partySchema = new Schema({
+const partyinfoSchema = new Schema({
   _id: defaults.guid(),
   v: {
     type: Number,
@@ -28,14 +28,14 @@ module.exports = function ({
   models,
   connection
 }) {
-  if (!Party) {
+  if (!PartyInfo) {
     if (!models) {
       throw new Error('models required');
     }
     if (!connection) {
       throw new Error('connection required');
     }
-    Party = connection.model('party', partySchema);
+    PartyInfo = connection.model('partyinfo', partyinfoSchema);
   }
-  return Party;
+  return PartyInfo;
 };

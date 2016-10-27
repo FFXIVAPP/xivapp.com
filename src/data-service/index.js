@@ -6,11 +6,11 @@ let savedConnection = null;
 const ActorEntity = require('./schemas/actorentity.js');
 const ChatLogPointers = require('./schemas/chatlogpointers.js');
 const Inventory = require('./schemas/inventory.js');
-const Party = require('./schemas/party.js');
+const PartyInfo = require('./schemas/partyinfo.js');
 const PartyEntity = require('./schemas/partyentity.js');
 const PlayerInfo = require('./schemas/playerinfo.js');
 const PlayerEntity = require('./schemas/playerentity.js');
-const Target = require('./schemas/target.js');
+const TargetInfo = require('./schemas/targetinfo.js');
 const Signature = require('./schemas/signature.js');
 const StatusEntry = require('./schemas/statusentry.js');
 const EnmityEntry = require('./schemas/enmityentry.js');
@@ -19,11 +19,11 @@ const SCHEMAS = {
   ActorEntity,
   ChatLogPointers,
   Inventory,
-  Party,
+  PartyInfo,
   PartyEntity,
   PlayerInfo,
   PlayerEntity,
-  Target,
+  TargetInfo,
   Signature,
   StatusEntry,
   EnmityEntry

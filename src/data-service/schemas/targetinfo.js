@@ -1,13 +1,13 @@
 const Mongoose = require('mongoose');
 const Schema = Mongoose.Schema;
 
-let Target = null;
+let TargetInfo = null;
 
 const defaults = require('../defaults.js');
 const indexed = defaults.indexed;
 const unique = defaults.unique;
 
-const targetSchema = new Schema({
+const targetinfoSchema = new Schema({
   _id: defaults.guid(),
   v: {
     type: Number,
@@ -33,14 +33,14 @@ module.exports = function ({
   models,
   connection
 }) {
-  if (!Target) {
+  if (!TargetInfo) {
     if (!models) {
       throw new Error('models required');
     }
     if (!connection) {
       throw new Error('connection required');
     }
-    Target = connection.model('target', targetSchema);
+    TargetInfo = connection.model('targetinfo', targetinfoSchema);
   }
-  return Target;
+  return TargetInfo;
 };
