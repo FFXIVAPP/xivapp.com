@@ -1,0 +1,11 @@
+[Service]
+ExecStart=node /opt/nodesvcs/xivapp.com/index.js
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=xivapp
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target

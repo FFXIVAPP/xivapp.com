@@ -9,6 +9,7 @@
 
 LAUNCH_DIR=${PWD}
 
+systemctl disable xivapp.com
 stop xivapp.com
 
 cd ..
@@ -17,9 +18,10 @@ rm -rf node_modules/
 yarn
 # ensure conf files
 cd $LAUNCH_DIR
-yes | cp -f xivapp.com.init.conf /etc/init/xivapp.com.conf
+yes | cp -f xivapp.com.service /etc/systemd/system/xivapp.com.service
 yes | cp -f xivapp.com.nginx.conf /etc/nginx/conf.d/xivapp.com.conf
 
-start xivapp.com
+systemctl start xivapp.com
+systemctl enable xivapp.com
 
 nginx -s reload
