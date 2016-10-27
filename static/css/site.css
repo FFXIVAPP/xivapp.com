@@ -1,0 +1,56 @@
+@import url(https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.4.0/animate.min.css);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.1/css/font-awesome.min.css);
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,300,100,100italic,300italic,400italic,500,500italic,700,900,700italic,900italic);
+html, body {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  font-family: 'Roboto', sans-serif
+}
+
+body {
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+.app {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-left: -125px;
+  margin-top: -69px;
+  width: 250px;
+  height: 138px;
+}
+
+.app img {
+  width: 250px;
+  height: 138px;
+}
+
+.row {
+  margin-top: 10px;
+}
+
+.colorizer-bar {
+  position: fixed;
+  top: 50px;
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(270deg, #2196f3, #f44336, #ff9800, #cddc39, #00bcd4);
+  background-size: 1000%;
+  animation: loading 10s ease infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 0% 50%
+  }
+  50% {
+    background-position: 100% 50%
+  }
+  100% {
+    background-position: 0% 50%
+  }
+}

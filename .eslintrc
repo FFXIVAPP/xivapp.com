@@ -1,0 +1,181 @@
+{
+  "extends": "eslint:recommended",
+  "parser": "espree",
+  "env": {
+    "browser": true,
+    "es6": true,
+    "jasmine": true,
+    "jquery": true,
+    "node": true
+  },
+  "plugins": [],
+  "globals": {
+    "Config": true
+  },
+  "settings": {
+    "ecamscript": 6
+  },
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "ecmaFeatures": {
+      "arrowFunctions": true,
+      "binaryLiterals": true,
+      "blockBindings": true,
+      "classes": true,
+      "defaultParams": true,
+      "destructuring": true,
+      "forOf": true,
+      "generators": true,
+      "modules": true,
+      "objectLiteralComputedProperties": true,
+      "objectLiteralDuplicateProperties": true,
+      "objectLiteralShorthandMethods": true,
+      "objectLiteralShorthandProperties": true,
+      "octalLiterals": true,
+      "regexUFlag": true,
+      "regexYFlag": true,
+      "restParams": true,
+      "spread": true,
+      "superInFunctions": true,
+      "templateStrings": true,
+      "unicodeCodePointEscapes": true,
+      # "globalReturn": true,
+      "jsx": true,
+      "experimentalObjectRestSpread": true
+    },
+    "sourceType": "module"
+  },
+  "rules": {
+    # Possible Errors
+    "comma-dangle": [2, "never"],
+    "no-console": 0,
+    "no-extra-parens": [2, "functions"],
+    "no-inner-declarations": [2, "functions"],
+
+    # Best Practices
+    "accessor-pairs": 2,
+    "block-scoped-var": 2,
+    "complexity": [1, 11],
+    "consistent-return": 1,
+    "curly": [2, "all"],
+    "default-case": 2,
+    "dot-notation": [2, {
+      "allowKeywords": true,
+      "allowPattern": "^[a-z]+(_[a-z]+)+$"
+    }],
+    "eqeqeq": [2, "smart"],
+    "guard-for-in": 1,
+    "no-alert": 2,
+    "no-caller": 2,
+    "no-div-regex": 2,
+    "no-else-return": 2,
+    "no-eq-null": 2,
+    "no-eval": 2,
+    "no-extend-native": 2,
+    "no-extra-bind": 2,
+    "no-floating-decimal": 2,
+    "no-implied-eval": 2,
+    "no-implicit-coercion": 2,
+    "no-iterator": 2,
+    "no-labels": 2,
+    "no-lone-blocks": 2,
+    "no-loop-func": 2,
+    "no-multi-spaces": 2,
+    "no-multi-str": 2,
+    "no-native-reassign": 2,
+    "no-new-func": 1,
+    "no-new-wrappers": 2,
+    "no-new": 2,
+    "no-octal-escape": 2,
+    "no-param-reassign": 2,
+    "no-proto": 2,
+    "no-return-assign": 1,
+    "no-script-url": 2,
+    "no-self-compare": 2,
+    "no-sequences": 2,
+    "no-throw-literal": 2,
+    "no-unused-expressions": 2,
+    "no-useless-call": 1,
+    "no-void": 2,
+    "no-warning-comments": [2, {
+      "terms": ["todo", "fixme", "xxx"],
+      "location": "start"
+    }],
+    "no-with": 2,
+    "radix": 1,
+    "wrap-iife": [2, "inside"],
+    "yoda": [2, "never"],
+
+    # Strict Mode
+    "strict": [2, "global"],
+
+    # Variables
+    "no-undefined": 1,
+    "no-unused-vars": [1, {
+      "vars": "all",
+      "args": "after-used",
+      "varsIgnorePattern": "^React$"
+    }],
+
+    # Node.js and CommonJS
+    "global-require": 1,
+    "handle-callback-err": 2,
+    "no-mixed-requires": [0, false],
+    "no-new-require": 1,
+
+    # Stylistic Issues
+    "array-bracket-spacing": [0, "never"],
+    "brace-style": [0, "1tbs"],
+    "computed-property-spacing": [0, "never"],
+    "consistent-this": [0, "that"],
+    "func-style": [0, "declaration"],
+    "indent": [2, 2, {
+      "SwitchCase": 1
+    }],
+    "jsx-quotes": [2, "prefer-single"],
+    "key-spacing": [0, {
+      "beforeColon": false,
+      "afterColon": true
+    }],
+    "linebreak-style": [0, "unix"],
+    "max-depth": [0, 4],
+    "max-len": [0, 80, 4],
+    "max-nested-callbacks": [0, 2],
+    "max-params": [0, 3],
+    "max-statements": [0, 10],
+    "new-cap": 2,
+    "no-mixed-spaces-and-tabs": [2, false],
+    "no-multiple-empty-lines": [0, {
+      "max": 2
+    }],
+    "object-curly-spacing": [0, "never"],
+    "one-var": [0, "always"],
+    "operator-assignment": [0, "always"],
+    "quotes": [2, "single", { "allowTemplateLiterals": true }],
+    "semi-spacing": [0, {
+      "before": false,
+      "after": true
+    }],
+    "semi": [2, "always"],
+    "space-in-parens": [0, "never"],
+    "space-unary-ops": [0, {
+      "words": true,
+      "nonwords": false
+    }],
+
+    # ECMAScript 6
+    "arrow-parens": ["error", "always"],
+    "arrow-spacing": [2, {
+      "before": true,
+      "after": true
+    }],
+    "no-const-assign": 2,
+    "no-var": 2,
+    "object-shorthand": [1, "always"],
+    "prefer-arrow-callback": 2,
+    "prefer-const": 2,
+    "prefer-reflect": 2,
+    "prefer-spread": 2,
+    "prefer-template": 2
+  }
+}

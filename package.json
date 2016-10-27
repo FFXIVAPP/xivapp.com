@@ -1,0 +1,59 @@
+{
+  "name": "xivapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "check": "npm-check -u",
+    "eslint": "eslint --ext .js --quiet ./",
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:FFXIVAPP/xivapp.com.git"
+  },
+  "author": "Ryan Wilson <syndicated.life@gmail.com> (http://syndicated.life/)",
+  "license": "All Rights Reserved",
+  "dependencies": {
+    "babel-plugin-transform-class-properties": "^6.16.0",
+    "babel-plugin-transform-es2015-destructuring": "^6.16.0",
+    "babel-plugin-transform-es2015-function-name": "^6.9.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.16.0",
+    "babel-plugin-transform-es2015-parameters": "^6.17.0",
+    "babel-plugin-transform-object-rest-spread": "^6.16.0",
+    "babel-register": "^6.16.3",
+    "bluebird": "^3.4.0",
+    "boom": "^4.1.0",
+    "catbox-redis": "^2.0.2",
+    "flat": "^2.0.1",
+    "good": "^7.0.1",
+    "good-console": "^6.1.2",
+    "good-file": "^6.0.1",
+    "good-squeeze": "^5.0.0",
+    "hapi": "^15.1.1",
+    "hapi-swagger": "^7.2.0",
+    "hoek": "^4.1.0",
+    "inert": "^4.0.0",
+    "joi": "^9.2.0",
+    "moment": "^2.15.2",
+    "mongoose": "^4.6.5",
+    "npm-check": "*",
+    "ratelimiter": "^2.1.3",
+    "redis": "^2.6.2",
+    "request": "^2.75.0",
+    "request-promise": "^4.1.1",
+    "rotating-file-stream": "^1.0.5",
+    "uuid": "^2.0.3",
+    "vision": "^4.1.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.0.0",
+    "eslint": "^3.7.1",
+    "eslint-plugin-babel": "^3.2.0",
+    "nodemon": "^1.9.2"
+  },
+  "config": {},
+  "engines": {
+    "node": ">=6.0.0"
+  }
+}
