@@ -5,7 +5,8 @@ let savedConnection = null;
 
 const ActorEntity = require('./schemas/actorentity.js');
 const ChatLogPointers = require('./schemas/chatlogpointers.js');
-const Inventory = require('./schemas/inventory.js');
+const InventoryEntity = require('./schemas/inventoryentity.js');
+const ItemInfo = require('./schemas/iteminfo.js');
 const PartyInfo = require('./schemas/partyinfo.js');
 const PartyEntity = require('./schemas/partyentity.js');
 const PlayerInfo = require('./schemas/playerinfo.js');
@@ -18,7 +19,8 @@ const EnmityEntry = require('./schemas/enmityentry.js');
 const SCHEMAS = {
   ActorEntity,
   ChatLogPointers,
-  Inventory,
+  InventoryEntity,
+  ItemInfo,
   PartyInfo,
   PartyEntity,
   PlayerInfo,
