@@ -9,8 +9,8 @@
 
 LAUNCH_DIR=${PWD}
 
-systemctl disable xivapp.com
-stop xivapp.com
+systemctl disable xivapp.com.service
+stop xivapp.com.service
 
 cd ..
 
@@ -21,7 +21,7 @@ cd $LAUNCH_DIR
 yes | cp -f xivapp.com.service /etc/systemd/system/xivapp.com.service
 yes | cp -f xivapp.com.nginx.conf /etc/nginx/conf.d/xivapp.com.conf
 
-systemctl start xivapp.com
-systemctl enable xivapp.com
+systemctl start xivapp.com.service
+systemctl enable xivapp.com.service
 
 nginx -s reload
