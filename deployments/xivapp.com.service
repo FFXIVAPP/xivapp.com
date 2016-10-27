@@ -1,11 +1,13 @@
+[Unit]
+Description=xivapp.com service
+
 [Service]
-ExecStart=node /opt/nodesvcs/xivapp.com/index.js
+ExecStart=/root/.nvm/versions/node/v6.9.1/bin/node /opt/nodesvcs/xivapp.com/index.js
 Restart=always
+RestartSec=10
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=xivapp
-User=root
-Group=root
 
 [Install]
 WantedBy=multi-user.target
