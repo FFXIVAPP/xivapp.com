@@ -43,11 +43,11 @@ global.Config = {
     'ActorEntity',
     'ChatLogPointers',
     'Inventory',
-    'Party',
+    'PartyInfo',
     'PartyEntity',
     'PlayerInfo',
     'PlayerEntity',
-    'Target',
+    'TargetInfo',
     'StatusEntry',
     'EnmityEntry'
   ],
