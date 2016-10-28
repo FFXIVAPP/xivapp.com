@@ -58,7 +58,9 @@ const actorentitySchema = new Schema({
   CastingTargetID: Number,
   CastingProgress: Number,
   CastingTime: Number,
-  StatusEffects: Number
+  DefaultBaseOffset: Number,
+  DefaultStatOffset: Number,
+  DefaultStatusEffectOffset: Number
 }, {
   strict: false,
   timestamps: {

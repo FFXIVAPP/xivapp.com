@@ -20,6 +20,7 @@ const targetinfoSchema = new Schema({
   Focus: Number,
   Previous: Number,
   Current: Number,
+  CurrentID: Number,
   Size: Number
 }, {
   strict: false,
