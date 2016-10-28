@@ -2,6 +2,10 @@ const Joi = require('joi');
 const Boom = require('boom');
 const Promise = require('bluebird');
 
+const {
+  flatten
+} = require('flat');
+
 const setupRoutes = (server) => {
   const structureInfo = (id, {
     patchVersion,
@@ -273,11 +277,17 @@ const setupRoutes = (server) => {
             platform
           } = request.payload;
           if (global.DB[type]) {
+            const $set = flatten({
+              ...request.payload
+            });
             global.DB[type].findOneAndUpdate({
               patchVersion,
               platform
-            }, request.payload, {
+            }, {
+              $set
+            }, {
               upsert: true,
+              new: true,
               setDefaultsOnInsert: true
             }, (err, saved) => {
               if (err) {

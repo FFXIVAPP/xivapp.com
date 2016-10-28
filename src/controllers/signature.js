@@ -1,6 +1,10 @@
 const Joi = require('joi');
 const Boom = require('boom');
 
+const {
+  flatten
+} = require('flat')
+
 const setupRoutes = (server) => {
   const offsetInfo = (id, {
     patchVersion,
@@ -212,15 +216,19 @@ const setupRoutes = (server) => {
             Key
           } = request.payload;
           const keyedIndex = `${patchVersion}-${platform}-${Key}`;
+          const $set = flatten({
+            ...request.payload,
+            keyedIndex
+          });
           global.DB.Signature.findOneAndUpdate({
             patchVersion,
             platform,
             Key
           }, {
-            ...request.payload,
-            keyedIndex
+            $set
           }, {
             upsert: true,
+            new: true,
             setDefaultsOnInsert: true
           }, (err, saved) => {
             if (err) {
