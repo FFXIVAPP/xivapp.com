@@ -65,7 +65,7 @@ const setupRoutes = (server) => {
       cache: 'redisCache',
       expiresIn: 28 * 24 * 60 * 60 * 1000,
       segment: 'structure',
-      generateTimeout: 1000
+      generateTimeout: 5000
     },
     generateKey: (id, query) => {
       return [id, ...Object.keys(query).map((key) => query[key])].join('-');
@@ -80,8 +80,8 @@ const setupRoutes = (server) => {
       description: 'Memory structures by patch version, platform.',
       validate: {
         query: {
-          patchVersion: Joi.string().valid(global.Config.PatchVersions).default(global.Config.PatchVersions[0]),
-          platform: Joi.string().valid(global.Config.Platforms).default('x86')
+          patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.'),
+          platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
         }
       },
       handler: (request, reply) => {
@@ -107,8 +107,8 @@ const setupRoutes = (server) => {
           type: Joi.string().valid(global.Config.StructureTypes).default(global.Config.StructureTypes[0])
         },
         query: {
-          patchVersion: Joi.string().valid(global.Config.PatchVersions).default(global.Config.PatchVersions[0]),
-          platform: Joi.string().valid(global.Config.Platforms).default('x86')
+          patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.'),
+          platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
         }
       },
       handler: (request, reply) => {
@@ -144,7 +144,7 @@ const setupRoutes = (server) => {
         if (global.DB[type]) {
           const response = {};
           Object.keys(global.DB[type].schema.paths).forEach((key) => {
-            if (!['v', '__v', '_id', 'created', 'updated'].includes(key)) {
+            if (!['v', '__v', '_id', 'created', 'updated', 'patchVersion', 'platform'].includes(key)) {
               response[key] = global.DB[type].schema.paths[key].instance;
             }
           });
@@ -161,37 +161,61 @@ const setupRoutes = (server) => {
     config: {
       tags: ['api'],
       description: 'Memory structures created for patch version and platform by type.',
-      validate: {
-        params: {
+      validate: (() => {
+        const params = {
           type: Joi.string().valid(global.Config.StructureTypes).default(global.Config.StructureTypes[0])
-        },
-        query: {
+        };
+        const query = {
           appID: Joi.string().guid().required()
-        },
-        payload: {
-          patchVersion: Joi.string().min(1).required(),
-          platform: Joi.string().valid(global.Config.Platforms).default('x86').required()
-        }
-      },
-      handler: (request, reply) => {
-        if (request.query.appID !== 'b7b26a58-7555-4bad-8f02-02209424b691') {
-          return reply(Boom.unauthorized('Unauthorized "appID" in query parameter'));
-        }
-        const {
-          type
-        } = request.params;
-        if (global.DB[type]) {
-          global.DB[type].create(request.payload, (err, saved) => {
-            if (err) {
-              return reply(Boom.expectationFailed(err.message));
+        };
+        const payload = {
+          patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.'),
+          platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
+        };
+        Object.keys(global.DB).filter((type) => !['logger', 'Signature', 'User'].includes(type)).forEach((type) => {
+          const SchemaType = type;
+          const Schema = global.DB[SchemaType];
+          Object.keys(Schema.schema.paths).forEach((key) => {
+            if (!['v', '__v', '_id', 'created', 'updated', 'keyedIndex', 'patchVersion', 'platform'].includes(key)) {
+              const type = Schema.schema.paths[key].instance;
+              if (key === 'Array') {
+                const arrayType = Schema.schema.paths[key].casterConstructor.schemaName;
+                payload[key] = Joi[type.toLowerCase()]().items(Joi[arrayType.toLowerCase()]());
+              } else {
+                payload[key] = Joi[type.toLowerCase()]();
+              }
             }
-            return reply({
-              _id: saved._id
-            });
           });
-        } else {
-          return reply(Boom.expectationFailed(`No associated schema to save for type of [${type}]`));
-        }
+        });
+        return {
+          params,
+          query,
+          payload
+        };
+      })(),
+      handler: (request, reply) => {
+        global.DB.User.findOne({
+          _id: request.query.appID
+        }, (err, result) => {
+          if (err || !result) {
+            return reply(Boom.unauthorized('Unauthorized "appID" in query parameter'));
+          }
+          const {
+            type
+          } = request.params;
+          if (global.DB[type]) {
+            global.DB[type].create(request.payload, (err, saved) => {
+              if (err) {
+                return reply(Boom.expectationFailed(err.message));
+              }
+              return reply({
+                _id: saved._id
+              });
+            });
+          } else {
+            return reply(Boom.expectationFailed(`No associated schema to save for type of [${type}]`));
+          }
+        });
       }
     }
   });
@@ -202,47 +226,71 @@ const setupRoutes = (server) => {
     config: {
       tags: ['api'],
       description: 'Memory structures to update for patch version and platform by type.',
-      validate: {
-        params: {
+      validate: (() => {
+        const params = {
           type: Joi.string().valid(global.Config.StructureTypes).default(global.Config.StructureTypes[0])
-        },
-        query: {
+        };
+        const query = {
           appID: Joi.string().guid().required()
-        },
-        payload: {
-          patchVersion: Joi.string().min(1).required(),
-          platform: Joi.string().valid(global.Config.Platforms).default('x86').required()
-        }
-      },
+        };
+        const payload = {
+          patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.'),
+          platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.'),
+        };
+        Object.keys(global.DB).filter((type) => !['logger', 'Signature', 'User'].includes(type)).forEach((type) => {
+          const SchemaType = type;
+          const Schema = global.DB[SchemaType];
+          Object.keys(Schema.schema.paths).forEach((key) => {
+            if (!['v', '__v', '_id', 'created', 'updated', 'keyedIndex', 'patchVersion', 'platform'].includes(key)) {
+              const type = Schema.schema.paths[key].instance;
+              if (key === 'Array') {
+                const arrayType = Schema.schema.paths[key].casterConstructor.schemaName;
+                payload[key] = Joi[type.toLowerCase()]().items(Joi[arrayType.toLowerCase()]());
+              } else {
+                payload[key] = Joi[type.toLowerCase()]();
+              }
+            }
+          });
+        });
+        return {
+          params,
+          query,
+          payload
+        };
+      })(),
       handler: (request, reply) => {
-        if (request.query.appID !== 'b7b26a58-7555-4bad-8f02-02209424b691') {
-          return reply(Boom.unauthorized('Unauthorized "appID" in query parameter'));
-        }
-        const {
-          type
-        } = request.params;
-        const {
-          patchVersion,
-          platform
-        } = request.payload;
-        if (global.DB[type]) {
-          global.DB[type].findOneAndUpdate({
+        global.DB.User.findOne({
+          _id: request.query.appID
+        }, (err, result) => {
+          if (err || !result) {
+            return reply(Boom.unauthorized('Unauthorized "appID" in query parameter'));
+          }
+          const {
+            type
+          } = request.params;
+          const {
             patchVersion,
             platform
-          }, request.payload, {
-            upsert: true,
-            setDefaultsOnInsert: true
-          }, (err, saved) => {
-            if (err) {
-              return reply(Boom.expectationFailed(err.message));
-            }
-            return reply({
-              _id: saved._id
+          } = request.payload;
+          if (global.DB[type]) {
+            global.DB[type].findOneAndUpdate({
+              patchVersion,
+              platform
+            }, request.payload, {
+              upsert: true,
+              setDefaultsOnInsert: true
+            }, (err, saved) => {
+              if (err) {
+                return reply(Boom.expectationFailed(err.message));
+              }
+              return reply({
+                _id: saved._id
+              });
             });
-          });
-        } else {
-          return reply(Boom.expectationFailed(`No associated schema to save for type of [${type}]`));
-        }
+          } else {
+            return reply(Boom.expectationFailed(`No associated schema to save for type of [${type}]`));
+          }
+        });
       }
     }
   });

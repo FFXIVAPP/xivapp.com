@@ -129,19 +129,6 @@ module.exports = function (startServer = true) {
       handleError(err, true);
       return;
     }
-
-    // SETUP ROUTES
-    fs.readdir(path.resolve(__dirname, CONTROLLER_PATH), (err, files) => {
-      if (err) {
-        throw err;
-      }
-      files.forEach((file) => {
-        require(path.resolve(__dirname, CONTROLLER_PATH, file)).setupRoutes(server); // eslint-disable-line global-require
-      });
-    });
-
-    server.decoder('special', (options) => Zlib.createGunzip(options));
-
     if (startServer) {
       const dataService = new DataService({
         config: global.Config.mongo,
@@ -150,6 +137,19 @@ module.exports = function (startServer = true) {
       dataService.ensureConnection()
         .then((database) => {
           global.DB = database;
+
+          // SETUP ROUTES
+          fs.readdir(path.resolve(__dirname, CONTROLLER_PATH), (err, files) => {
+            if (err) {
+              throw err;
+            }
+            files.forEach((file) => {
+              require(path.resolve(__dirname, CONTROLLER_PATH, file)).setupRoutes(server); // eslint-disable-line global-require
+            });
+          });
+
+          server.decoder('special', (options) => Zlib.createGunzip(options));
+
           server.start((err) => {
             if (err) {
               serverLog('debug', 'startError');

@@ -52,7 +52,7 @@ const setupRoutes = (server) => {
       cache: 'redisCache',
       expiresIn: 28 * 24 * 60 * 60 * 1000,
       segment: 'zone',
-      generateTimeout: 1000
+      generateTimeout: 5000
     }
   });
 

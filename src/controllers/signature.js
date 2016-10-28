@@ -47,7 +47,7 @@ const setupRoutes = (server) => {
       cache: 'redisCache',
       expiresIn: 28 * 24 * 60 * 60 * 1000,
       segment: 'offset',
-      generateTimeout: 1000
+      generateTimeout: 5000
     },
     generateKey: (id, query) => {
       return [id, ...Object.keys(query).map((key) => query[key])].join('-');
@@ -62,8 +62,8 @@ const setupRoutes = (server) => {
       description: 'Memory signatures by platform version and platform.',
       validate: {
         query: {
-          patchVersion: Joi.string().valid(global.Config.PatchVersions).default(global.Config.PatchVersions[0]),
-          platform: Joi.string().valid(global.Config.Platforms).default('x86')
+          patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.'),
+          platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
         }
       },
       handler: (request, reply) => {
@@ -89,8 +89,8 @@ const setupRoutes = (server) => {
           Key: Joi.string().valid(global.Config.SignatureKeys)
         },
         query: {
-          patchVersion: Joi.string().valid(global.Config.PatchVersions).default(global.Config.PatchVersions[0]),
-          platform: Joi.string().valid(global.Config.Platforms).default('x86')
+          patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.'),
+          platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
         }
       },
       handler: (request, reply) => {
@@ -114,35 +114,54 @@ const setupRoutes = (server) => {
     config: {
       tags: ['api'],
       description: 'Memory signatures created for patch version and platform by type.',
-      validate: {
-        query: {
+      validate: (() => {
+        const query = {
           appID: Joi.string().guid().required()
-        },
-        payload: {
-          patchVersion: Joi.string().min(1).required(),
-          platform: Joi.string().valid(global.Config.Platforms).default('x86').required(),
-          Key: Joi.string().valid(global.Config.SignatureKeys)
-        }
-      },
-      handler: (request, reply) => {
-        if (request.query.appID !== 'b7b26a58-7555-4bad-8f02-02209424b691') {
-          return reply(Boom.unauthorized('Unauthorized "appID" in query parameter'));
-        }
-        const {
-          patchVersion,
-          platform,
-          Key
-        } = request.payload;
-        const keyedIndex = `${patchVersion}-${platform}-${Key}`;
-        global.DB.Signature.create({
-          ...request.payload,
-          keyedIndex
-        }, (err, saved) => {
-          if (err) {
-            return reply(Boom.expectationFailed(err.message));
+        };
+        const payload = {
+          patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.'),
+          platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.'),
+          Key: Joi.string().valid(global.Config.SignatureKeys).required()
+        };
+        Object.keys(global.DB.Signature.schema.paths).forEach((key) => {
+          if (!['v', '__v', '_id', 'created', 'updated', 'keyedIndex', 'platform', 'patchVersion', 'Key'].includes(key)) {
+            const type = global.DB.Signature.schema.paths[key].instance;
+            if (type === 'Array') {
+              const arrayType = global.DB.Signature.schema.paths[key].casterConstructor.schemaName;
+              payload[key] = Joi[type.toLowerCase()]().items(Joi[arrayType.toLowerCase()]());
+            } else {
+              payload[key] = Joi[type.toLowerCase()]();
+            }
           }
-          return reply({
-            _id: saved._id
+        });
+        return {
+          query,
+          payload
+        };
+      })(),
+      handler: (request, reply) => {
+        global.DB.User.findOne({
+          _id: request.query.appID
+        }, (err, result) => {
+          if (err || !result) {
+            return reply(Boom.unauthorized('Unauthorized "appID" in query parameter'));
+          }
+          const {
+            patchVersion,
+            platform,
+            Key
+          } = request.payload;
+          const keyedIndex = `${patchVersion}-${platform}-${Key}`;
+          global.DB.Signature.create({
+            ...request.payload,
+            keyedIndex
+          }, (err, saved) => {
+            if (err) {
+              return reply(Boom.expectationFailed(err.message));
+            }
+            return reply({
+              _id: saved._id
+            });
           });
         });
       }
@@ -155,42 +174,61 @@ const setupRoutes = (server) => {
     config: {
       tags: ['api'],
       description: 'Memory signatures to update for patch version and platform by type.',
-      validate: {
-        query: {
+      validate: (() => {
+        const query = {
           appID: Joi.string().guid().required()
-        },
-        payload: {
-          patchVersion: Joi.string().min(1).required(),
-          platform: Joi.string().valid(global.Config.Platforms).default('x86').required(),
-          Key: Joi.string().valid(global.Config.SignatureKeys)
-        }
-      },
-      handler: (request, reply) => {
-        if (request.query.appID !== 'b7b26a58-7555-4bad-8f02-02209424b691') {
-          return reply(Boom.unauthorized('Unauthorized "appID" in query parameter'));
-        }
-        const {
-          patchVersion,
-          platform,
-          Key
-        } = request.payload;
-        const keyedIndex = `${patchVersion}-${platform}-${Key}`;
-        global.DB.Signature.findOneAndUpdate({
-          patchVersion,
-          platform,
-          Key
-        }, {
-          ...request.payload,
-          keyedIndex
-        }, {
-          upsert: true,
-          setDefaultsOnInsert: true
-        }, (err, saved) => {
-          if (err) {
-            return reply(Boom.expectationFailed(err.message));
+        };
+        const payload = {
+          patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.'),
+          platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.'),
+          Key: Joi.string().valid(global.Config.SignatureKeys).required()
+        };
+        Object.keys(global.DB.Signature.schema.paths).forEach((key) => {
+          if (!['v', '__v', '_id', 'created', 'updated', 'keyedIndex', 'platform', 'patchVersion', 'Key'].includes(key)) {
+            const type = global.DB.Signature.schema.paths[key].instance;
+            if (type === 'Array') {
+              const arrayType = global.DB.Signature.schema.paths[key].casterConstructor.schemaName;
+              payload[key] = Joi[type.toLowerCase()]().items(Joi[arrayType.toLowerCase()]());
+            } else {
+              payload[key] = Joi[type.toLowerCase()]();
+            }
           }
-          return reply({
-            _id: saved._id
+        });
+        return {
+          query,
+          payload
+        };
+      })(),
+      handler: (request, reply) => {
+        global.DB.User.findOne({
+          _id: request.query.appID
+        }, (err, result) => {
+          if (err || !result) {
+            return reply(Boom.unauthorized('Unauthorized "appID" in query parameter'));
+          }
+          const {
+            patchVersion,
+            platform,
+            Key
+          } = request.payload;
+          const keyedIndex = `${patchVersion}-${platform}-${Key}`;
+          global.DB.Signature.findOneAndUpdate({
+            patchVersion,
+            platform,
+            Key
+          }, {
+            ...request.payload,
+            keyedIndex
+          }, {
+            upsert: true,
+            setDefaultsOnInsert: true
+          }, (err, saved) => {
+            if (err) {
+              return reply(Boom.expectationFailed(err.message));
+            }
+            return reply({
+              _id: saved._id
+            });
           });
         });
       }
