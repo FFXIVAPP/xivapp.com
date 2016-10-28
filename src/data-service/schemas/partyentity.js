@@ -26,7 +26,7 @@ const partyentitySchema = new Schema({
   HPMax: Number,
   MPCurrent: Number,
   MPMax: Number,
-  StatusEffects: Number
+  DefaultStatusEffectOffset: Number
 }, {
   strict: false,
   timestamps: {
