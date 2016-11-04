@@ -12,15 +12,22 @@ const setupRoutes = (server) => {
     platform,
     type
   }, next) => {
+    const ignoredFields = {
+      v: 0,
+      __v: 0,
+      _id: 0,
+      patchVersion: 0,
+      platform: 0,
+      keyedIndex: 0,
+      created: 0,
+      updated: 0
+    };
     if (type) {
       const keyedIndex = `${patchVersion}-${platform}-${type}`;
       if (global.DB[type]) {
         global.DB[type].findOne({
           keyedIndex
-        }, {
-          v: 0,
-          __v: 0
-        }, {
+        }, ignoredFields, {
           lean: true
         }, (err, result) => {
           process.nextTick(() => next(err, result));
@@ -35,10 +42,7 @@ const setupRoutes = (server) => {
             const keyedIndex = `${patchVersion}-${platform}-${type}`;
             global.DB[type].findOne({
               keyedIndex
-            }, {
-              v: 0,
-              __v: 0
-            }, {
+            }, ignoredFields, {
               lean: true
             }, (err, result) => {
               if (err) {

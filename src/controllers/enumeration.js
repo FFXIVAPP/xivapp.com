@@ -11,15 +11,22 @@ const setupRoutes = (server) => {
     platform,
     key
   }, next) => {
-    const keyedIndex = `${patchVersion}-${platform}-${key}`;
+    const ignoredFields = {
+      v: 0,
+      __v: 0,
+      _id: 0,
+      patchVersion: 0,
+      platform: 0,
+      keyedIndex: 0,
+      created: 0,
+      updated: 0
+    };
     if (key) {
+      const keyedIndex = `${patchVersion}-${platform}-${key}`;
       if (global.DB.Enumeration) {
         global.DB.Enumeration.findOne({
           keyedIndex
-        }, {
-          v: 0,
-          __v: 0
-        }, {
+        }, ignoredFields, {
           lean: true
         }, (err, result) => {
           process.nextTick(() => next(err, result));
@@ -34,10 +41,7 @@ const setupRoutes = (server) => {
             const keyedIndex = `${patchVersion}-${platform}-${type}`;
             global.DB.Enumeration.findOne({
               keyedIndex
-            }, {
-              v: 0,
-              __v: 0
-            }, {
+            }, ignoredFields, {
               lean: true
             }, (err, result) => {
               if (err) {
