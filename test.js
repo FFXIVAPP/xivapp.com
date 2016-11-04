@@ -64,15 +64,6 @@ global.Config = {
     'AGRO_COUNT',
     'ENMITYMAP',
     'PARTYCOUNT'
-  ],
-  EnumerationKeys: [
-    'ActionStatus',
-    'Icon',
-    'Job',
-    'Sex',
-    'Status',
-    'TargetType',
-    'Type'
   ]
 };
 

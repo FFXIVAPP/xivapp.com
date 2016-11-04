@@ -13,10 +13,10 @@ const setupRoutes = (server) => {
     type
   }, next) => {
     if (type) {
+      const keyedIndex = `${patchVersion}-${platform}-${type}`;
       if (global.DB[type]) {
         global.DB[type].findOne({
-          patchVersion,
-          platform
+          keyedIndex
         }, {
           v: 0,
           __v: 0
@@ -32,9 +32,9 @@ const setupRoutes = (server) => {
       const promises = global.Config.StructureTypes.map((type) => {
         if (global.DB[type]) {
           return new Promise((resolve, reject) => {
+            const keyedIndex = `${patchVersion}-${platform}-${type}`;
             global.DB[type].findOne({
-              patchVersion,
-              platform
+              keyedIndex
             }, {
               v: 0,
               __v: 0
@@ -170,12 +170,11 @@ const setupRoutes = (server) => {
           type: Joi.string().valid(global.Config.StructureTypes).default(global.Config.StructureTypes[0])
         };
         const query = {
-          appID: Joi.string().guid().required()
-        };
-        const payload = {
+          appID: Joi.string().guid().required(),
           patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.'),
           platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
         };
+        const payload = {};
         Object.keys(global.DB).filter((type) => !['logger', 'Signature', 'User'].includes(type)).forEach((type) => {
           const SchemaType = type;
           const Schema = global.DB[SchemaType];
@@ -205,10 +204,20 @@ const setupRoutes = (server) => {
             return reply(Boom.unauthorized('Unauthorized "appID" in query parameter'));
           }
           const {
+            patchVersion,
+            platform
+          } = request.query;
+          const {
             type
           } = request.params;
           if (global.DB[type]) {
-            global.DB[type].create(request.payload, (err, saved) => {
+            const keyedIndex = `${patchVersion}-${platform}-${type}`;
+            global.DB[type].create({
+              ...request.payload,
+              patchVersion,
+              platform,
+              keyedIndex
+            }, (err, saved) => {
               if (err) {
                 return reply(Boom.expectationFailed(err.message));
               }
@@ -235,12 +244,11 @@ const setupRoutes = (server) => {
           type: Joi.string().valid(global.Config.StructureTypes).default(global.Config.StructureTypes[0])
         };
         const query = {
-          appID: Joi.string().guid().required()
-        };
-        const payload = {
+          appID: Joi.string().guid().required(),
           patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.'),
-          platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.'),
+          platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
         };
+        const payload = {};
         Object.keys(global.DB).filter((type) => !['logger', 'Signature', 'User'].includes(type)).forEach((type) => {
           const SchemaType = type;
           const Schema = global.DB[SchemaType];
@@ -275,14 +283,17 @@ const setupRoutes = (server) => {
           const {
             patchVersion,
             platform
-          } = request.payload;
+          } = request.query;
           if (global.DB[type]) {
+            const keyedIndex = `${patchVersion}-${platform}-${type}`;
             const $set = flatten({
-              ...request.payload
+              ...request.payload,
+              patchVersion,
+              platform,
+              keyedIndex
             });
             global.DB[type].findOneAndUpdate({
-              patchVersion,
-              platform
+              keyedIndex
             }, {
               $set
             }, {

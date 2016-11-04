@@ -13,8 +13,9 @@ const statusentrySchema = new Schema({
     type: Number,
     default: 1
   },
-  patchVersion: unique(indexed(defaults.trimmedString())),
+  patchVersion: indexed(defaults.trimmedString()),
   platform: indexed(defaults.trimmedString()),
+  keyedIndex: unique(indexed(defaults.trimmedString())),
   StatusID: Number,
   Stacks: Number,
   Duration: Number,

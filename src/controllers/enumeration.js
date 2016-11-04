@@ -6,15 +6,15 @@ const {
 } = require('flat')
 
 const setupRoutes = (server) => {
-  const offsetInfo = (id, {
+  const enumerationInfo = (id, {
     patchVersion,
     platform,
     key
   }, next) => {
     const keyedIndex = `${patchVersion}-${platform}-${key}`;
     if (key) {
-      if (global.DB.Signature) {
-        global.DB.Signature.findOne({
+      if (global.DB.Enumeration) {
+        global.DB.Enumeration.findOne({
           keyedIndex
         }, {
           v: 0,
@@ -28,7 +28,7 @@ const setupRoutes = (server) => {
         process.nextTick(() => next());
       }
     } else {
-      global.DB.Signature.find({
+      global.DB.Enumeration.find({
         patchVersion,
         platform
       }, {
@@ -45,11 +45,11 @@ const setupRoutes = (server) => {
     }
   };
 
-  server.method('offset', offsetInfo, {
+  server.method('enumeration', enumerationInfo, {
     cache: {
       cache: 'redisCache',
       expiresIn: 28 * 24 * 60 * 60 * 1000,
-      segment: 'offset',
+      segment: 'enumeration',
       generateTimeout: 5000
     },
     generateKey: (id, query) => {
@@ -59,10 +59,10 @@ const setupRoutes = (server) => {
 
   server.route({
     method: 'GET',
-    path: '/api/signatures',
+    path: '/api/enums',
     config: {
       tags: ['api'],
-      description: 'Memory signatures by platform version and platform.',
+      description: 'Memory enums by platform version and platform.',
       validate: {
         query: {
           patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.'),
@@ -71,7 +71,7 @@ const setupRoutes = (server) => {
       },
       handler: (request, reply) => {
         const ID = request.path.split('/').pop();
-        server.methods.offset(ID, request.query, (err, result) => {
+        server.methods.enumeration(ID, request.query, (err, result) => {
           if (err) {
             return reply(Boom.expectationFailed(err.message));
           }
@@ -83,13 +83,13 @@ const setupRoutes = (server) => {
 
   server.route({
     method: 'GET',
-    path: '/api/signatures/{key}',
+    path: '/api/enums/{key}',
     config: {
       tags: ['api'],
-      description: 'Memory signatures by platform version and platform.',
+      description: 'Memory enums by platform version and platform.',
       validate: {
         params: {
-          key: Joi.string().valid(global.Config.SignatureKeys)
+          key: Joi.string().valid(global.Config.EnumerationKeys)
         },
         query: {
           patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.'),
@@ -98,7 +98,7 @@ const setupRoutes = (server) => {
       },
       handler: (request, reply) => {
         const ID = request.path.split('/').pop();
-        server.methods.offset(ID, {
+        server.methods.enumeration(ID, {
           ...request.query,
           ...request.params
         }, (err, result) => {
@@ -113,13 +113,13 @@ const setupRoutes = (server) => {
 
   server.route({
     method: 'POST',
-    path: '/api/signatures/{key}',
+    path: '/api/enums/{key}',
     config: {
       tags: ['api'],
-      description: 'Memory signatures created for patch version and platform by type.',
+      description: 'Memory enums created for patch version and platform by type.',
       validate: (() => {
         const params = {
-          key: Joi.string().valid(global.Config.SignatureKeys).required()
+          key: Joi.string().valid(global.Config.EnumerationKeys).required()
         };
         const query = {
           appID: Joi.string().guid().required(),
@@ -127,11 +127,11 @@ const setupRoutes = (server) => {
           platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
         };
         const payload = {};
-        Object.keys(global.DB.Signature.schema.paths).forEach((key) => {
+        Object.keys(global.DB.Enumeration.schema.paths).forEach((key) => {
           if (!['v', '__v', '_id', 'created', 'updated', 'keyedIndex', 'platform', 'patchVersion', 'Key'].includes(key)) {
-            const type = global.DB.Signature.schema.paths[key].instance;
+            const type = global.DB.Enumeration.schema.paths[key].instance;
             if (type === 'Array') {
-              const arrayType = global.DB.Signature.schema.paths[key].casterConstructor.schemaName;
+              const arrayType = global.DB.Enumeration.schema.paths[key].casterConstructor.schemaName;
               payload[key] = Joi[type.toLowerCase()]().items(Joi[arrayType.toLowerCase()]());
             } else {
               payload[key] = Joi[type.toLowerCase()]();
@@ -159,7 +159,7 @@ const setupRoutes = (server) => {
             platform
           } = request.query;
           const keyedIndex = `${patchVersion}-${platform}-${key}`;
-          global.DB.Signature.create({
+          global.DB.Enumeration.create({
             ...request.payload,
             patchVersion,
             platform,
@@ -179,13 +179,13 @@ const setupRoutes = (server) => {
 
   server.route({
     method: 'PATCH',
-    path: '/api/signatures/{key}',
+    path: '/api/enums/{key}',
     config: {
       tags: ['api'],
-      description: 'Memory signatures to update for patch version and platform by type.',
+      description: 'Memory enums to update for patch version and platform by type.',
       validate: (() => {
         const params = {
-          key: Joi.string().valid(global.Config.SignatureKeys).required()
+          key: Joi.string().valid(global.Config.EnumerationKeys).required()
         };
         const query = {
           appID: Joi.string().guid().required(),
@@ -193,11 +193,11 @@ const setupRoutes = (server) => {
           platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
         };
         const payload = {};
-        Object.keys(global.DB.Signature.schema.paths).forEach((key) => {
+        Object.keys(global.DB.Enumeration.schema.paths).forEach((key) => {
           if (!['v', '__v', '_id', 'created', 'updated', 'keyedIndex', 'platform', 'patchVersion', 'Key'].includes(key)) {
-            const type = global.DB.Signature.schema.paths[key].instance;
+            const type = global.DB.Enumeration.schema.paths[key].instance;
             if (type === 'Array') {
-              const arrayType = global.DB.Signature.schema.paths[key].casterConstructor.schemaName;
+              const arrayType = global.DB.Enumeration.schema.paths[key].casterConstructor.schemaName;
               payload[key] = Joi[type.toLowerCase()]().items(Joi[arrayType.toLowerCase()]());
             } else {
               payload[key] = Joi[type.toLowerCase()]();
@@ -231,7 +231,7 @@ const setupRoutes = (server) => {
             platform,
             keyedIndex
           });
-          global.DB.Signature.findOneAndUpdate({
+          global.DB.Enumeration.findOneAndUpdate({
             keyedIndex
           }, {
             $set

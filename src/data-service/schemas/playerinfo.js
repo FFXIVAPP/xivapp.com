@@ -13,8 +13,9 @@ const playerinfoSchema = new Schema({
     type: Number,
     default: 1
   },
-  patchVersion: unique(indexed(defaults.trimmedString())),
+  patchVersion: indexed(defaults.trimmedString()),
   platform: indexed(defaults.trimmedString()),
+  keyedIndex: unique(indexed(defaults.trimmedString())),
   EnmityCount: Number,
   EnmityStructure: Number
 }, {
@@ -27,8 +28,7 @@ const playerinfoSchema = new Schema({
 
 module.exports = function ({
   models,
-  connection,
-  logger
+  connection
 }) {
   if (!PlayerInfo) {
     if (!models) {

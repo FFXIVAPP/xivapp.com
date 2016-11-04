@@ -13,8 +13,9 @@ const inventoryentitySchema = new Schema({
     type: Number,
     default: 1
   },
-  patchVersion: unique(indexed(defaults.trimmedString())),
+  patchVersion: indexed(defaults.trimmedString()),
   platform: indexed(defaults.trimmedString()),
+  keyedIndex: unique(indexed(defaults.trimmedString())),
   Amount: Number
 }, {
   strict: false,

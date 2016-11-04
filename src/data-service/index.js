@@ -16,6 +16,7 @@ const Signature = require('./schemas/signature.js');
 const StatusEntry = require('./schemas/statusentry.js');
 const EnmityEntry = require('./schemas/enmityentry.js');
 const User = require('./schemas/user.js');
+const Enumeration = require('./schemas/enumeration.js');
 
 const SCHEMAS = {
   ActorEntity,
@@ -30,7 +31,8 @@ const SCHEMAS = {
   Signature,
   StatusEntry,
   EnmityEntry,
-  User
+  User,
+  Enumeration
 };
 
 class DataService {

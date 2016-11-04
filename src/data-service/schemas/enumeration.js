@@ -1,13 +1,13 @@
 const Mongoose = require('mongoose');
 const Schema = Mongoose.Schema;
 
-let ItemInfo = null;
+let Enumeration = null;
 
 const defaults = require('../defaults.js');
 const indexed = defaults.indexed;
 const unique = defaults.unique;
 
-const iteminfoSchema = new Schema({
+const enumerationSchema = new Schema({
   _id: defaults.guid(),
   v: {
     type: Number,
@@ -16,13 +16,7 @@ const iteminfoSchema = new Schema({
   patchVersion: indexed(defaults.trimmedString()),
   platform: indexed(defaults.trimmedString()),
   keyedIndex: unique(indexed(defaults.trimmedString())),
-  ID: Number,
-  Slot: Number,
-  Amount: Number,
-  SB: Number,
-  Durability: Number,
-  GlamourID: Number,
-  IsHQ: Number
+  Key: String
 }, {
   strict: false,
   timestamps: {
@@ -35,14 +29,14 @@ module.exports = function ({
   models,
   connection
 }) {
-  if (!ItemInfo) {
+  if (!Enumeration) {
     if (!models) {
       throw new Error('models required');
     }
     if (!connection) {
       throw new Error('connection required');
     }
-    ItemInfo = connection.model('iteminfo', iteminfoSchema);
+    Enumeration = connection.model('enumeration', enumerationSchema);
   }
-  return ItemInfo;
+  return Enumeration;
 };
