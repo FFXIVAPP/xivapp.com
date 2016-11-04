@@ -19,7 +19,7 @@ const signatureSchema = new Schema({
   Key: indexed(defaults.trimmedString()),
   Value: defaults.trimmedString(),
   RegularExpress: defaults.trimmedString(),
-  SigScanAddress: defaults.trimmedString(),
+  SigScanAddress: Number,
   ASMSignature: Boolean,
   PointerPath: [
     Number
