@@ -28,20 +28,38 @@ const setupRoutes = (server) => {
         process.nextTick(() => next());
       }
     } else {
-      global.DB.Enumeration.find({
-        patchVersion,
-        platform
-      }, {
-        v: 0,
-        __v: 0
-      }, {
-        lean: true
-      }, (err, results) => {
-        if (err) {
-          return process.nextTick(() => next(err));
+      const promises = global.Config.EnumerationKeys.map((type) => {
+        if (global.DB.Enumeration) {
+          return new Promise((resolve, reject) => {
+            const keyedIndex = `${patchVersion}-${platform}-${type}`;
+            global.DB.Enumeration.findOne({
+              keyedIndex
+            }, {
+              v: 0,
+              __v: 0
+            }, {
+              lean: true
+            }, (err, result) => {
+              if (err) {
+                return reject(err);
+              }
+              return resolve(result);
+            });
+          });
         }
-        return process.nextTick(() => next(null, results));
+        return Promise.resolve({});
       });
+      Promise.all(promises)
+        .then((results) => {
+          const response = {};
+          global.Config.EnumerationKeys.forEach((type, i) => {
+            response[type] = results[i];
+          });
+          process.nextTick(() => next(null, response));
+        })
+        .catch((err) => {
+          process.nextTick(() => next(err));
+        });
     }
   };
 
