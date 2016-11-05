@@ -10,7 +10,7 @@ const Promise = require('bluebird');
 const setupRoutes = (server) => {
 
   const zoneInfo = (id, next) => {
-    const promises = global.Config.Languages.map((language) => rest(`${global.Config.XIVDB.URL}/maps/places?language=${language}`, restOptions));
+    const promises = global.Config.Languages.map((language) => rest(`${global.Config.XIVDB.URL}/maps/placenames?language=${language}`, restOptions));
     Promise.all(promises)
       .then((results) => {
         const response = {};
@@ -26,7 +26,7 @@ const setupRoutes = (server) => {
           const place = places[language];
           Object.keys(place).forEach((key) => {
             const location = place[key];
-            response[location.territory_type] = {
+            response[location.territory_id] = {
               Name: {
                 Chinese: places.cn[location.id].name,
                 Korean: places.ko[location.id].name,

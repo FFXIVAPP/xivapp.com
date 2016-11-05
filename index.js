@@ -6,7 +6,7 @@ if (process.env.NEW_RELIC_APP_NAME && process.env.NEW_RELIC_LICENSE_KEY) {
 
 global.Config = {
   mongo: {
-    host: process.env.MONGO_HOST || '127.0.0.1'
+    host: '159.203.17.181'
   },
   LimiterOptions: {
     redis: {

@@ -50,7 +50,8 @@ const setupRoutes = (server) => {
             };
             const options = {
               upsert: false,
-              new: true
+              new: true,
+              multi: true
             };
             global.DB[type].update({
               patchVersion,

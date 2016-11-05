@@ -19,12 +19,18 @@ const setupRoutes = (server) => {
       platform: 0,
       keyedIndex: 0,
       created: 0,
-      updated: 0
+      updated: 0,
+      latest: 0
     };
+    const latest = patchVersion === 'latest';
     const keyedIndex = `${patchVersion}-${platform}-${key}`;
     if (key) {
       if (global.DB.Signature) {
-        global.DB.Signature.findOne({
+        global.DB.Signature.findOne(latest ? {
+          platform,
+          Key: key,
+          latest
+        } : {
           keyedIndex
         }, ignoredFields, {
           lean: true
@@ -35,7 +41,10 @@ const setupRoutes = (server) => {
         process.nextTick(() => next());
       }
     } else {
-      global.DB.Signature.find({
+      global.DB.Signature.find(latest ? {
+        platform,
+        latest
+      } : {
         patchVersion,
         platform
       }, ignoredFields, {

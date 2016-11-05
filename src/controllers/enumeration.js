@@ -19,12 +19,19 @@ const setupRoutes = (server) => {
       platform: 0,
       keyedIndex: 0,
       created: 0,
-      updated: 0
+      updated: 0,
+      latest: 0,
+      Key: 0
     };
+    const latest = patchVersion === 'latest';
     if (key) {
       const keyedIndex = `${patchVersion}-${platform}-${key}`;
       if (global.DB.Enumeration) {
-        global.DB.Enumeration.findOne({
+        global.DB.Enumeration.findOne(latest ? {
+          platform,
+          Key: key,
+          latest
+        } : {
           keyedIndex
         }, ignoredFields, {
           lean: true
@@ -39,7 +46,11 @@ const setupRoutes = (server) => {
         if (global.DB.Enumeration) {
           return new Promise((resolve, reject) => {
             const keyedIndex = `${patchVersion}-${platform}-${type}`;
-            global.DB.Enumeration.findOne({
+            global.DB.Enumeration.findOne(latest ? {
+              platform,
+              Key: type,
+              latest
+            } : {
               keyedIndex
             }, ignoredFields, {
               lean: true
@@ -185,6 +196,7 @@ const setupRoutes = (server) => {
             ...request.payload,
             patchVersion,
             platform,
+            Key: key,
             keyedIndex
           }, (err, saved) => {
             if (err) {
@@ -251,6 +263,7 @@ const setupRoutes = (server) => {
             ...request.payload,
             patchVersion,
             platform,
+            Key: key,
             keyedIndex
           });
           global.DB.Enumeration.findOneAndUpdate({

@@ -20,12 +20,17 @@ const setupRoutes = (server) => {
       platform: 0,
       keyedIndex: 0,
       created: 0,
-      updated: 0
+      updated: 0,
+      latest: 0
     };
+    const latest = patchVersion === 'latest';
     if (type) {
       const keyedIndex = `${patchVersion}-${platform}-${type}`;
       if (global.DB[type]) {
-        global.DB[type].findOne({
+        global.DB[type].findOne(latest ? {
+          platform,
+          latest
+        } : {
           keyedIndex
         }, ignoredFields, {
           lean: true
@@ -40,7 +45,10 @@ const setupRoutes = (server) => {
         if (global.DB[type]) {
           return new Promise((resolve, reject) => {
             const keyedIndex = `${patchVersion}-${platform}-${type}`;
-            global.DB[type].findOne({
+            global.DB[type].findOne(latest ? {
+              platform,
+              latest
+            } : {
               keyedIndex
             }, ignoredFields, {
               lean: true
@@ -152,7 +160,7 @@ const setupRoutes = (server) => {
         if (global.DB[type]) {
           const response = {};
           Object.keys(global.DB[type].schema.paths).forEach((key) => {
-            if (!['v', '__v', '_id', 'created', 'updated', 'patchVersion', 'platform'].includes(key)) {
+            if (!['v', '__v', '_id', 'created', 'updated', 'patchVersion', 'platform', 'latest'].includes(key)) {
               response[key] = global.DB[type].schema.paths[key].instance;
             }
           });
