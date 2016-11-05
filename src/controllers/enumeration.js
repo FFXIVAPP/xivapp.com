@@ -150,7 +150,7 @@ const setupRoutes = (server) => {
         };
         const payload = {};
         Object.keys(global.DB.Enumeration.schema.paths).forEach((key) => {
-          if (!['v', '__v', '_id', 'created', 'updated', 'keyedIndex', 'platform', 'patchVersion', 'Key'].includes(key)) {
+          if (!['v', '__v', '_id', 'created', 'updated', 'keyedIndex', 'platform', 'patchVersion', 'Key', 'latest'].includes(key)) {
             const type = global.DB.Enumeration.schema.paths[key].instance;
             if (type === 'Array') {
               const arrayType = global.DB.Enumeration.schema.paths[key].casterConstructor.schemaName;
@@ -216,7 +216,7 @@ const setupRoutes = (server) => {
         };
         const payload = {};
         Object.keys(global.DB.Enumeration.schema.paths).forEach((key) => {
-          if (!['v', '__v', '_id', 'created', 'updated', 'keyedIndex', 'platform', 'patchVersion', 'Key'].includes(key)) {
+          if (!['v', '__v', '_id', 'created', 'updated', 'keyedIndex', 'platform', 'patchVersion', 'Key', 'latest'].includes(key)) {
             const type = global.DB.Enumeration.schema.paths[key].instance;
             if (type === 'Array') {
               const arrayType = global.DB.Enumeration.schema.paths[key].casterConstructor.schemaName;

@@ -183,7 +183,7 @@ const setupRoutes = (server) => {
           const SchemaType = type;
           const Schema = global.DB[SchemaType];
           Object.keys(Schema.schema.paths).forEach((key) => {
-            if (!['v', '__v', '_id', 'created', 'updated', 'keyedIndex', 'patchVersion', 'platform'].includes(key)) {
+            if (!['v', '__v', '_id', 'created', 'updated', 'keyedIndex', 'patchVersion', 'platform', 'latest'].includes(key)) {
               const type = Schema.schema.paths[key].instance;
               if (key === 'Array') {
                 const arrayType = Schema.schema.paths[key].casterConstructor.schemaName;
@@ -257,7 +257,7 @@ const setupRoutes = (server) => {
           const SchemaType = type;
           const Schema = global.DB[SchemaType];
           Object.keys(Schema.schema.paths).forEach((key) => {
-            if (!['v', '__v', '_id', 'created', 'updated', 'keyedIndex', 'patchVersion', 'platform'].includes(key)) {
+            if (!['v', '__v', '_id', 'created', 'updated', 'keyedIndex', 'patchVersion', 'platform', 'latest'].includes(key)) {
               const type = Schema.schema.paths[key].instance;
               if (key === 'Array') {
                 const arrayType = Schema.schema.paths[key].casterConstructor.schemaName;
