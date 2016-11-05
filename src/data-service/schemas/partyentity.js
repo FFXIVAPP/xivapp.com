@@ -16,6 +16,9 @@ const partyentitySchema = new Schema({
   patchVersion: indexed(defaults.trimmedString()),
   platform: indexed(defaults.trimmedString()),
   keyedIndex: unique(indexed(defaults.trimmedString())),
+  latest: indexed({
+    type: Boolean
+  }),
   X: Number,
   Y: Number,
   Z: Number,

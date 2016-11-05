@@ -16,6 +16,9 @@ const enmityentrySchema = new Schema({
   patchVersion: indexed(defaults.trimmedString()),
   platform: indexed(defaults.trimmedString()),
   keyedIndex: unique(indexed(defaults.trimmedString())),
+  latest: indexed({
+    type: Boolean
+  }),
   ID: Number,
   Name: Number,
   Enmity: Number

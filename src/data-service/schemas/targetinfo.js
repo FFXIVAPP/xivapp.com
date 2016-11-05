@@ -16,6 +16,9 @@ const targetinfoSchema = new Schema({
   patchVersion: indexed(defaults.trimmedString()),
   platform: indexed(defaults.trimmedString()),
   keyedIndex: unique(indexed(defaults.trimmedString())),
+  latest: indexed({
+    type: Boolean
+  }),
   HateStructure: Number,
   MouseOver: Number,
   Focus: Number,

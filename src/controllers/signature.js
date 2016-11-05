@@ -69,7 +69,7 @@ const setupRoutes = (server) => {
       description: 'Memory signatures by platform version and platform.',
       validate: {
         query: {
-          patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.'),
+          patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.').default('latest'),
           platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
         }
       },
@@ -96,7 +96,7 @@ const setupRoutes = (server) => {
           key: Joi.string().valid(global.Config.SignatureKeys)
         },
         query: {
-          patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.'),
+          patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.').default('latest'),
           platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
         }
       },
@@ -127,7 +127,7 @@ const setupRoutes = (server) => {
         };
         const query = {
           appID: Joi.string().guid().required(),
-          patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.'),
+          patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.').default('latest'),
           platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
         };
         const payload = {};
@@ -167,7 +167,8 @@ const setupRoutes = (server) => {
             ...request.payload,
             patchVersion,
             platform,
-            keyedIndex
+            keyedIndex,
+            Key: key
           }, (err, saved) => {
             if (err) {
               return reply(Boom.expectationFailed(err.message));
@@ -193,7 +194,7 @@ const setupRoutes = (server) => {
         };
         const query = {
           appID: Joi.string().guid().required(),
-          patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.'),
+          patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.').default('latest'),
           platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
         };
         const payload = {};
@@ -233,7 +234,8 @@ const setupRoutes = (server) => {
             ...request.payload,
             patchVersion,
             platform,
-            keyedIndex
+            keyedIndex,
+            Key: key
           });
           global.DB.Signature.findOneAndUpdate({
             keyedIndex

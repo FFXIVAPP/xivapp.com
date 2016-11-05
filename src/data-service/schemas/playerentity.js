@@ -16,6 +16,9 @@ const playerentitySchema = new Schema({
   patchVersion: indexed(defaults.trimmedString()),
   platform: indexed(defaults.trimmedString()),
   keyedIndex: unique(indexed(defaults.trimmedString())),
+  latest: indexed({
+    type: Boolean
+  }),
   Name: Number,
   JobID: Number,
   PGL: Number,
