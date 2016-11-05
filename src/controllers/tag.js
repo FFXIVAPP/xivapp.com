@@ -11,7 +11,7 @@ const setupRoutes = (server) => {
     path: '/api/tag/{type}',
     config: {
       tags: ['api'],
-      description: 'Memory enums to update for patch version and platform by type.',
+      description: 'Update a data type by patch version to tag as latest; this will untag the current latest.',
       validate: (() => {
         const schemas = Object.keys(global.DB).filter((key) => key !== 'User' && key !== 'logger');
         const params = {
@@ -54,7 +54,6 @@ const setupRoutes = (server) => {
               multi: true
             };
             global.DB[type].update({
-              patchVersion,
               platform
             }, {
               $unset
