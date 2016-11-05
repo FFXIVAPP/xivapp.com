@@ -67,6 +67,7 @@ global.Config = {
     'PARTYCOUNT'
   ],
   EnumerationKeys: [
+    'Container',
     'ActionStatus',
     'Icon',
     'Job',
