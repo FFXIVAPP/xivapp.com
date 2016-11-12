@@ -59,7 +59,7 @@ global.Config = {
     'CHARMAP',
     'PARTYMAP',
     'MAPINFO',
-    'MAPINDEX',
+    'ZONEINFO',
     'PLAYERINFO',
     'AGRO',
     'AGRO_COUNT',
