@@ -1,4 +1,4 @@
-const setupRoutes = (server) => {
+const initialize = (server) => {
   server.route({
     method: 'GET',
     path: '/api/supported',
@@ -7,8 +7,8 @@ const setupRoutes = (server) => {
       description: 'An object of supported API query parameters',
       handler: (request, reply) => {
         reply({
-          languages: global.Config.Languages,
-          gameVersions: global.Config.GameVersions
+          languages: Config.Languages,
+          gameVersions: Config.GameVersions
         });
       }
     }
@@ -16,5 +16,5 @@ const setupRoutes = (server) => {
 };
 
 module.exports = {
-  setupRoutes
+  initialize
 };

@@ -3,93 +3,9 @@ const Boom = require('boom');
 
 const {
   flatten
-} = require('flat')
+} = require('flat');
 
-const setupRoutes = (server) => {
-  const enumerationInfo = (id, {
-    patchVersion,
-    platform,
-    key
-  }, next) => {
-    const ignoredFields = {
-      v: 0,
-      __v: 0,
-      _id: 0,
-      patchVersion: 0,
-      platform: 0,
-      keyedIndex: 0,
-      created: 0,
-      updated: 0,
-      latest: 0,
-      Key: 0
-    };
-    const latest = patchVersion === 'latest';
-    if (key) {
-      const keyedIndex = `${patchVersion}-${platform}-${key}`;
-      if (global.DB.Enumeration) {
-        global.DB.Enumeration.findOne(latest ? {
-          platform,
-          Key: key,
-          latest
-        } : {
-          keyedIndex
-        }, ignoredFields, {
-          lean: true
-        }, (err, result) => {
-          process.nextTick(() => next(err, result));
-        });
-      } else {
-        process.nextTick(() => next());
-      }
-    } else {
-      const promises = global.Config.EnumerationKeys.map((type) => {
-        if (global.DB.Enumeration) {
-          return new Promise((resolve, reject) => {
-            const keyedIndex = `${patchVersion}-${platform}-${type}`;
-            global.DB.Enumeration.findOne(latest ? {
-              platform,
-              Key: type,
-              latest
-            } : {
-              keyedIndex
-            }, ignoredFields, {
-              lean: true
-            }, (err, result) => {
-              if (err) {
-                return reject(err);
-              }
-              return resolve(result);
-            });
-          });
-        }
-        return Promise.resolve({});
-      });
-      Promise.all(promises)
-        .then((results) => {
-          const response = {};
-          global.Config.EnumerationKeys.forEach((type, i) => {
-            response[type] = results[i];
-          });
-          process.nextTick(() => next(null, response));
-        })
-        .catch((err) => {
-          process.nextTick(() => next(err));
-        });
-    }
-  };
-
-  server.method('enumeration', enumerationInfo, {
-    cache: {
-      cache: 'redisCache',
-      expiresIn: 28 * 24 * 60 * 60 * 1000,
-      segment: 'enumeration',
-      generateTimeout: 5000
-    },
-    generateKey: (id, query) => {
-      return [id, ...Object.keys(query).map((key) => query[key])].join('-');
-    }
-  });
-
+const initialize = (server) => {
   server.route({
     method: 'GET',
     path: '/api/enums',
@@ -99,7 +15,7 @@ const setupRoutes = (server) => {
       validate: {
         query: {
           patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.').default('latest'),
-          platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
+          platform: Joi.string().valid(Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
         }
       },
       handler: (request, reply) => {
@@ -122,11 +38,11 @@ const setupRoutes = (server) => {
       description: 'Memory enums by platform version and platform.',
       validate: {
         params: {
-          key: Joi.string().valid(global.Config.EnumerationKeys)
+          key: Joi.string().valid(Config.EnumerationKeys)
         },
         query: {
           patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.').default('latest'),
-          platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
+          platform: Joi.string().valid(Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
         }
       },
       handler: (request, reply) => {
@@ -152,19 +68,19 @@ const setupRoutes = (server) => {
       description: 'Memory enums created for patch version and platform by type.',
       validate: (() => {
         const params = {
-          key: Joi.string().valid(global.Config.EnumerationKeys).required()
+          key: Joi.string().valid(Config.EnumerationKeys).required()
         };
         const query = {
           appID: Joi.string().guid().required(),
           patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.').default('latest'),
-          platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
+          platform: Joi.string().valid(Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
         };
         const payload = {};
-        Object.keys(global.DB.Enumeration.schema.paths).forEach((key) => {
+        Object.keys(DB.Enumeration.schema.paths).forEach((key) => {
           if (!['v', '__v', '_id', 'created', 'updated', 'keyedIndex', 'platform', 'patchVersion', 'Key', 'latest'].includes(key)) {
-            const type = global.DB.Enumeration.schema.paths[key].instance;
+            const type = DB.Enumeration.schema.paths[key].instance;
             if (type === 'Array') {
-              const arrayType = global.DB.Enumeration.schema.paths[key].casterConstructor.schemaName;
+              const arrayType = DB.Enumeration.schema.paths[key].casterConstructor.schemaName;
               payload[key] = Joi[type.toLowerCase()]().items(Joi[arrayType.toLowerCase()]());
             } else {
               payload[key] = Joi[type.toLowerCase()]();
@@ -178,7 +94,7 @@ const setupRoutes = (server) => {
         };
       })(),
       handler: (request, reply) => {
-        global.DB.User.findOne({
+        DB.User.findOne({
           _id: request.query.appID
         }, (err, result) => {
           if (err || !result) {
@@ -192,7 +108,7 @@ const setupRoutes = (server) => {
             platform
           } = request.query;
           const keyedIndex = `${patchVersion}-${platform}-${key}`;
-          global.DB.Enumeration.create({
+          DB.Enumeration.create({
             ...request.payload,
             patchVersion,
             platform,
@@ -219,19 +135,19 @@ const setupRoutes = (server) => {
       description: 'Memory enums to update for patch version and platform by type.',
       validate: (() => {
         const params = {
-          key: Joi.string().valid(global.Config.EnumerationKeys).required()
+          key: Joi.string().valid(Config.EnumerationKeys).required()
         };
         const query = {
           appID: Joi.string().guid().required(),
           patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.').default('latest'),
-          platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
+          platform: Joi.string().valid(Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
         };
         const payload = {};
-        Object.keys(global.DB.Enumeration.schema.paths).forEach((key) => {
+        Object.keys(DB.Enumeration.schema.paths).forEach((key) => {
           if (!['v', '__v', '_id', 'created', 'updated', 'keyedIndex', 'platform', 'patchVersion', 'Key', 'latest'].includes(key)) {
-            const type = global.DB.Enumeration.schema.paths[key].instance;
+            const type = DB.Enumeration.schema.paths[key].instance;
             if (type === 'Array') {
-              const arrayType = global.DB.Enumeration.schema.paths[key].casterConstructor.schemaName;
+              const arrayType = DB.Enumeration.schema.paths[key].casterConstructor.schemaName;
               payload[key] = Joi[type.toLowerCase()]().items(Joi[arrayType.toLowerCase()]());
             } else {
               payload[key] = Joi[type.toLowerCase()]();
@@ -245,7 +161,7 @@ const setupRoutes = (server) => {
         };
       })(),
       handler: (request, reply) => {
-        global.DB.User.findOne({
+        DB.User.findOne({
           _id: request.query.appID
         }, (err, result) => {
           if (err || !result) {
@@ -266,7 +182,7 @@ const setupRoutes = (server) => {
             Key: key,
             keyedIndex
           });
-          global.DB.Enumeration.findOneAndUpdate({
+          DB.Enumeration.findOneAndUpdate({
             keyedIndex
           }, {
             $set
@@ -289,5 +205,5 @@ const setupRoutes = (server) => {
 };
 
 module.exports = {
-  setupRoutes
+  initialize
 };

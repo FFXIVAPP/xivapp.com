@@ -3,73 +3,9 @@ const Boom = require('boom');
 
 const {
   flatten
-} = require('flat')
+} = require('flat');
 
-const setupRoutes = (server) => {
-  const offsetInfo = (id, {
-    patchVersion,
-    platform,
-    key
-  }, next) => {
-    const ignoredFields = {
-      v: 0,
-      __v: 0,
-      _id: 0,
-      patchVersion: 0,
-      platform: 0,
-      keyedIndex: 0,
-      created: 0,
-      updated: 0,
-      latest: 0
-    };
-    const latest = patchVersion === 'latest';
-    const keyedIndex = `${patchVersion}-${platform}-${key}`;
-    if (key) {
-      if (global.DB.Signature) {
-        global.DB.Signature.findOne(latest ? {
-          platform,
-          Key: key,
-          latest
-        } : {
-          keyedIndex
-        }, ignoredFields, {
-          lean: true
-        }, (err, result) => {
-          process.nextTick(() => next(err, result));
-        });
-      } else {
-        process.nextTick(() => next());
-      }
-    } else {
-      global.DB.Signature.find(latest ? {
-        platform,
-        latest
-      } : {
-        patchVersion,
-        platform
-      }, ignoredFields, {
-        lean: true
-      }, (err, results) => {
-        if (err) {
-          return process.nextTick(() => next(err));
-        }
-        return process.nextTick(() => next(null, results));
-      });
-    }
-  };
-
-  server.method('offset', offsetInfo, {
-    cache: {
-      cache: 'redisCache',
-      expiresIn: 28 * 24 * 60 * 60 * 1000,
-      segment: 'offset',
-      generateTimeout: 5000
-    },
-    generateKey: (id, query) => {
-      return [id, ...Object.keys(query).map((key) => query[key])].join('-');
-    }
-  });
-
+const initialize = (server) => {
   server.route({
     method: 'GET',
     path: '/api/signatures',
@@ -79,7 +15,7 @@ const setupRoutes = (server) => {
       validate: {
         query: {
           patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.').default('latest'),
-          platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
+          platform: Joi.string().valid(Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
         }
       },
       handler: (request, reply) => {
@@ -102,11 +38,11 @@ const setupRoutes = (server) => {
       description: 'Memory signatures by platform version and platform.',
       validate: {
         params: {
-          key: Joi.string().valid(global.Config.SignatureKeys)
+          key: Joi.string().valid(Config.SignatureKeys)
         },
         query: {
           patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.').default('latest'),
-          platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
+          platform: Joi.string().valid(Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
         }
       },
       handler: (request, reply) => {
@@ -132,19 +68,19 @@ const setupRoutes = (server) => {
       description: 'Memory signatures created for patch version and platform by type.',
       validate: (() => {
         const params = {
-          key: Joi.string().valid(global.Config.SignatureKeys).required()
+          key: Joi.string().valid(Config.SignatureKeys).required()
         };
         const query = {
           appID: Joi.string().guid().required(),
           patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.').default('latest'),
-          platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
+          platform: Joi.string().valid(Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
         };
         const payload = {};
-        Object.keys(global.DB.Signature.schema.paths).forEach((key) => {
+        Object.keys(DB.Signature.schema.paths).forEach((key) => {
           if (!['v', '__v', '_id', 'created', 'updated', 'keyedIndex', 'platform', 'patchVersion', 'Key', 'latest'].includes(key)) {
-            const type = global.DB.Signature.schema.paths[key].instance;
+            const type = DB.Signature.schema.paths[key].instance;
             if (type === 'Array') {
-              const arrayType = global.DB.Signature.schema.paths[key].casterConstructor.schemaName;
+              const arrayType = DB.Signature.schema.paths[key].casterConstructor.schemaName;
               payload[key] = Joi[type.toLowerCase()]().items(Joi[arrayType.toLowerCase()]());
             } else {
               payload[key] = Joi[type.toLowerCase()]();
@@ -158,7 +94,7 @@ const setupRoutes = (server) => {
         };
       })(),
       handler: (request, reply) => {
-        global.DB.User.findOne({
+        DB.User.findOne({
           _id: request.query.appID
         }, (err, result) => {
           if (err || !result) {
@@ -172,7 +108,7 @@ const setupRoutes = (server) => {
             platform
           } = request.query;
           const keyedIndex = `${patchVersion}-${platform}-${key}`;
-          global.DB.Signature.create({
+          DB.Signature.create({
             ...request.payload,
             patchVersion,
             platform,
@@ -199,19 +135,19 @@ const setupRoutes = (server) => {
       description: 'Memory signatures to update for patch version and platform by type.',
       validate: (() => {
         const params = {
-          key: Joi.string().valid(global.Config.SignatureKeys).required()
+          key: Joi.string().valid(Config.SignatureKeys).required()
         };
         const query = {
           appID: Joi.string().guid().required(),
           patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.').default('latest'),
-          platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
+          platform: Joi.string().valid(Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
         };
         const payload = {};
-        Object.keys(global.DB.Signature.schema.paths).forEach((key) => {
+        Object.keys(DB.Signature.schema.paths).forEach((key) => {
           if (!['v', '__v', '_id', 'created', 'updated', 'keyedIndex', 'platform', 'patchVersion', 'Key', 'latest'].includes(key)) {
-            const type = global.DB.Signature.schema.paths[key].instance;
+            const type = DB.Signature.schema.paths[key].instance;
             if (type === 'Array') {
-              const arrayType = global.DB.Signature.schema.paths[key].casterConstructor.schemaName;
+              const arrayType = DB.Signature.schema.paths[key].casterConstructor.schemaName;
               payload[key] = Joi[type.toLowerCase()]().items(Joi[arrayType.toLowerCase()]());
             } else {
               payload[key] = Joi[type.toLowerCase()]();
@@ -225,7 +161,7 @@ const setupRoutes = (server) => {
         };
       })(),
       handler: (request, reply) => {
-        global.DB.User.findOne({
+        DB.User.findOne({
           _id: request.query.appID
         }, (err, result) => {
           if (err || !result) {
@@ -246,7 +182,7 @@ const setupRoutes = (server) => {
             keyedIndex,
             Key: key
           });
-          global.DB.Signature.findOneAndUpdate({
+          DB.Signature.findOneAndUpdate({
             keyedIndex
           }, {
             $set
@@ -269,5 +205,5 @@ const setupRoutes = (server) => {
 };
 
 module.exports = {
-  setupRoutes
+  initialize
 };

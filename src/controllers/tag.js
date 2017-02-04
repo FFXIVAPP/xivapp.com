@@ -1,11 +1,7 @@
 const Joi = require('joi');
 const Boom = require('boom');
 
-const {
-  flatten
-} = require('flat')
-
-const setupRoutes = (server) => {
+const initialize = (server) => {
   server.route({
     method: 'PATCH',
     path: '/api/tag/{type}',
@@ -13,14 +9,14 @@ const setupRoutes = (server) => {
       tags: ['api'],
       description: 'Update a data type by patch version to tag as latest; this will untag the current latest.',
       validate: (() => {
-        const schemas = Object.keys(global.DB).filter((key) => key !== 'User' && key !== 'logger');
+        const schemas = Object.keys(DB).filter((key) => key !== 'User' && key !== 'logger');
         const params = {
           type: Joi.string().valid(schemas).required()
         };
         const query = {
           appID: Joi.string().guid().required(),
           patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.'),
-          platform: Joi.string().valid(global.Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
+          platform: Joi.string().valid(Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
         };
         return {
           params,
@@ -28,7 +24,7 @@ const setupRoutes = (server) => {
         };
       })(),
       handler: (request, reply) => {
-        global.DB.User.findOne({
+        DB.User.findOne({
           _id: request.query.appID
         }, (err, result) => {
           if (err || !result) {
@@ -41,7 +37,7 @@ const setupRoutes = (server) => {
             patchVersion,
             platform
           } = request.query;
-          if (global.DB[type]) {
+          if (DB[type]) {
             const $unset = {
               latest: 1
             };
@@ -53,7 +49,7 @@ const setupRoutes = (server) => {
               new: true,
               multi: true
             };
-            global.DB[type].update({
+            DB[type].update({
               platform
             }, {
               $unset
@@ -61,7 +57,7 @@ const setupRoutes = (server) => {
               if (err) {
                 return reply(Boom.expectationFailed(err.message));
               }
-              global.DB[type].update({
+              DB[type].update({
                 patchVersion,
                 platform
               }, {
@@ -85,5 +81,5 @@ const setupRoutes = (server) => {
 };
 
 module.exports = {
-  setupRoutes
+  initialize
 };

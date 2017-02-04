@@ -35,6 +35,8 @@ const SCHEMAS = {
   Enumeration
 };
 
+mongoose.Promise = require('bluebird');
+
 class DataService {
   constructor({
     config = {},

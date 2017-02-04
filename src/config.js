@@ -1,24 +1,6 @@
-require('babel-register');
-
-if (process.env.NEW_RELIC_APP_NAME && process.env.NEW_RELIC_LICENSE_KEY) {
-  require('newrelic');
-}
-
-global.Config = {
+module.exports = {
   mongo: {
-    host: process.env.MONGO_HOST || '127.0.0.1'
-  },
-  LimiterOptions: {
-    redis: {
-      host: '127.0.0.1',
-      port: 6379,
-      options: {}
-    },
-    namespace: 'limiter',
-    global: {
-      limit: 250,
-      duration: 30
-    }
+    host: '127.0.0.1'
   },
   XIVDB: {
     URL: 'https://api.xivdb.com'
@@ -32,7 +14,8 @@ global.Config = {
     'cn'
   ],
   PatchVersions: [
-    '3.45'
+    '3.45',
+    '3.50'
   ],
   Platforms: [
     'x86',
@@ -58,15 +41,23 @@ global.Config = {
     'CHATLOG',
     'CHARMAP',
     'PARTYMAP',
-    'MAP',
+    'MAPINFO',
+    'ZONEINFO',
     'PLAYERINFO',
     'AGRO',
     'AGRO_COUNT',
     'ENMITYMAP',
-    'PARTYCOUNT'
+    'PARTYCOUNT',
+    'INVENTORY'
+  ],
+  EnumerationKeys: [
+    'Container',
+    'ActionStatus',
+    'Icon',
+    'Job',
+    'Sex',
+    'Status',
+    'TargetType',
+    'Type'
   ]
 };
-
-const source = require('./src/');
-
-source();

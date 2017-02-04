@@ -1,24 +1,24 @@
-const {
-  Server
-} = require('hapi');
-
-const Good = require('good');
-const Inert = require('inert');
-const Vision = require('vision');
-
-const HapiSwagger = require('hapi-swagger');
-const Pack = require('../package.json');
-const CatboxRedis = require('catbox-redis');
-
-const Limiter = require('./plugins/limiter/');
-
 const fs = require('fs');
 const path = require('path');
 const Zlib = require('zlib');
 
-const CONTROLLER_PATH = './controllers/';
+const async = require('async');
+const CatboxRedis = require('catbox-redis');
+const Good = require('good');
+const HapiSwagger = require('hapi-swagger');
+const Inert = require('inert');
+const {
+  Server
+} = require('hapi');
+const Vision = require('vision');
+
+global.Config = require('./config.js');
+global.Pack = require('../package.json');
+global.Helpers = require('./helpers/');
 
 const DataService = require('./data-service/');
+const controllers = require('./controllers/');
+const serverMethods = require('./server-methods/');
 
 const server = new Server({
   cache: [{
@@ -77,6 +77,59 @@ const handleError = (err, fatal) => {
   }
 };
 
+const registerCustomPlugins = () => {
+  const directory = path.resolve(__dirname, './plugins');
+  return new Promise((resolve, reject) => {
+    fs.readdir(directory, (err, items) => {
+      if (err) {
+        return reject(err);
+      }
+      const plugins = [];
+      items.forEach((item) => {
+        if (fs.statSync(path.resolve(directory, item)).isDirectory()) {
+          const indexFile = path.resolve(directory, item);
+          const configFile = path.resolve(directory, item, 'config.js');
+
+          const plugin = require(indexFile); // eslint-disable-line global-require
+          let pluginConfig = {};
+
+          try {
+            pluginConfig = require(configFile); // eslint-disable-line global-require
+          } catch (err) {
+            // IGNORED
+          }
+
+          plugins.push({
+            info: {
+              register: plugin,
+              options: pluginConfig
+            }
+          });
+        }
+      });
+      async.whilst(
+        () => {
+          return plugins.length;
+        },
+        (cb) => {
+          const {
+            info
+          } = plugins.shift();
+          server.register(info, (err) => {
+            cb(err);
+          });
+        },
+        (err) => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve();
+        }
+      );
+    });
+  });
+};
+
 module.exports = function (startServer = true) {
   server.on('request-error', (request, err) => {
     serverLog('debug', 'request-error');
@@ -103,7 +156,8 @@ module.exports = function (startServer = true) {
       }
     }
   });
-  const plugins = [{
+
+  server.register([{
     register: Good,
     options: LoggingOptions
   }, {
@@ -116,54 +170,96 @@ module.exports = function (startServer = true) {
       documentationPath: '/docs',
       info: {
         title: 'XIVAPP',
-        version: Pack.version
+        version: global.Pack.version
       }
     }
-  }, {
-    register: Limiter,
-    options: Config.LimiterOptions
-  }];
-  server.register(plugins, (err) => {
+  }], (err) => {
     if (err) {
       serverLog('debug', 'registerError');
       handleError(err, true);
       return;
     }
-    if (startServer) {
-      const dataService = new DataService({
-        config: global.Config.mongo,
-        logger: serverLog
-      });
-      dataService.ensureConnection()
-        .then((database) => {
-          global.DB = database;
 
-          // SETUP ROUTES
-          fs.readdir(path.resolve(__dirname, CONTROLLER_PATH), (err, files) => {
-            if (err) {
-              throw err;
+    Promise.resolve()
+      .then(() => registerCustomPlugins(server))
+      .then(() => {
+        // AJAX/FETCH CALLS
+        server.route({
+          method: 'OPTIONS',
+          path: '/{param*}',
+          config: {
+            auth: false,
+            handler: (request, reply) => {
+              const accessControlAllowHeaders = [];
+              Object.keys(request.headers).forEach((index) => {
+                accessControlAllowHeaders.push(request.headers[index]);
+              });
+              reply().type('text/plain')
+                .header('Access-Control-Allow-Origin', '*')
+                .header('Access-Control-Allow-Headers', accessControlAllowHeaders.join(', ').trim())
+                .header('Access-Control-Allow-Methods', 'HEAD,PUT,GET,POST,DELETE');
             }
-            files.forEach((file) => {
-              require(path.resolve(__dirname, CONTROLLER_PATH, file)).setupRoutes(server); // eslint-disable-line global-require
-            });
-          });
-
-          server.decoder('special', (options) => Zlib.createGunzip(options));
-
-          server.start((err) => {
-            if (err) {
-              serverLog('debug', 'startError');
-              handleError(err, true);
-              return;
-            }
-            console.log('Server Running @', server.info.uri);
-          });
-        })
-        .catch((err) => {
-          serverLog('debug', 'dbConnectionError');
-          handleError(err, true);
+          }
         });
-    }
+
+        // ROOT
+        server.route({
+          method: 'GET',
+          path: '/{param*}',
+          handler: {
+            directory: {
+              path: path.join(__dirname, '../static'),
+              index: true,
+              lookupCompressed: true
+            }
+          }
+        });
+
+        const dataService = new DataService({
+          config: Config.mongo,
+          logger: serverLog
+        });
+
+        dataService.ensureConnection()
+          .then((database) => {
+            global.DB = database;
+
+            // SETUP SERVER METHODS
+            serverMethods.initialize(server);
+
+            // SETUP CONTROLLERS/ROUTES
+            controllers.initialize(server);
+
+            if (startServer) {
+              server.decoder('special', (options) => Zlib.createGunzip(options));
+
+              server.app.cache = new global.Helpers.Cache();
+
+              server.app.cache.start()
+                .then(() => {
+                  server.start((err) => {
+                    if (err) {
+                      serverLog('debug', 'startError');
+                      handleError(err, true);
+                      return;
+                    }
+                    console.log('Server Running @', server.info.uri);
+                  });
+                })
+                .catch((err) => {
+                  serverLog('debug', 'startCacheError');
+                  handleError(err, true);
+                });
+            }
+          })
+          .catch((err) => {
+            serverLog('debug', 'startDBError');
+            handleError(err, true);
+          });
+      })
+      .catch((err) => {
+        handleError(err, true);
+      });
   });
   return server;
 };
