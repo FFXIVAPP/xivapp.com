@@ -11,36 +11,36 @@ const initialize = ({
   const segment = 'zone';
 
   server.method(segment, (id, next) => {
-    const promises = Config.Languages.map((language) => rest(`${Config.XIVDB.URL}/maps?language=${language}`, restOptions));
+    const promises = Config.Languages.map((language) => rest(`${Config.XIVDB.URL}/maps/get/layers/placename?language=${language}`, restOptions));
     Promise.all(promises)
       .then((results) => {
         const response = {};
         const maps = {
-          en: results[0],
-          fr: results[1],
-          de: results[2],
-          ja: results[3],
-          ko: results[4],
-          cn: results[5]
+          en: results[0].data,
+          fr: results[1].data,
+          de: results[2].data,
+          ja: results[3].data,
+          ko: results[4].data,
+          cn: results[5].data
         };
         Config.Languages.forEach((language) => {
           const places = maps[language];
-          places.forEach((place, placeIndex) => {
-            const locations = place.placenames;
-            locations.forEach((location, locationIndex) => {
+          Object.keys(places).forEach((key) => {
+            if (key !== '0') {
+              const location = places[key][0];
               response[location.territory_id] = {
                 Name: {
-                  Chinese: maps.cn[placeIndex].placenames[locationIndex].name,
-                  Korean: maps.ko[placeIndex].placenames[locationIndex].name,
-                  English: maps.en[placeIndex].placenames[locationIndex].name,
-                  French: maps.fr[placeIndex].placenames[locationIndex].name,
-                  German: maps.de[placeIndex].placenames[locationIndex].name,
-                  Japanese: maps.ja[placeIndex].placenames[locationIndex].name
+                  Chinese: maps.cn[key][0].placename,
+                  Korean: maps.ko[key][0].placename,
+                  English: maps.en[key][0].placename,
+                  French: maps.fr[key][0].placename,
+                  German: maps.de[key][0].placename,
+                  Japanese: maps.ja[key][0].placename
                 },
                 Index: location.territory_type,
                 IsDungeonInstance: false
               };
-            });
+            }
           });
         });
         process.nextTick(() => next(null, response));
