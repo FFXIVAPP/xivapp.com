@@ -19,7 +19,7 @@ const initialize = (server) => {
         }
       },
       handler: (request, reply) => {
-        const ID = request.path.split('/').pop();
+        const ID = global.Helpers.utils.generateCacheKey(request.path.split('/').pop(), request.query);
         server.methods.structure(ID, request.query, (err, result) => {
           if (err) {
             return reply(Boom.expectationFailed(err.message));
@@ -46,7 +46,7 @@ const initialize = (server) => {
         }
       },
       handler: (request, reply) => {
-        const ID = request.path.split('/').pop();
+        const ID = global.Helpers.utils.generateCacheKey(request.path.split('/').pop(), request.query);
         server.methods.structure(ID, {
           ...request.query,
           ...request.params

@@ -9,7 +9,7 @@ const initialize = (server) => {
       tags: ['api'],
       description: 'A list of status effects aggregated from XIVDB and ETL\'d into FFXIVAPP class formats.',
       handler: (request, reply) => {
-        const ID = request.path.split('/').pop();
+        const ID = global.Helpers.utils.generateCacheKey(request.path.split('/').pop(), request.query);
         server.methods.status(ID, (err, result) => {
           if (err) {
             return reply(Boom.expectationFailed(err.message));

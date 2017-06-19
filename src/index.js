@@ -172,7 +172,7 @@ module.exports = function (startServer = true) {
         title: 'XIVAPP',
         version: global.Pack.version
       },
-      schemes: ['https']
+      schemes: ['http', 'https']
     }
   }], (err) => {
     if (err) {
