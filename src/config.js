@@ -49,15 +49,5 @@ module.exports = {
     'ENMITYMAP',
     'PARTYCOUNT',
     'INVENTORY'
-  ],
-  EnumerationKeys: [
-    'Container',
-    'ActionStatus',
-    'Icon',
-    'Job',
-    'Sex',
-    'Status',
-    'TargetType',
-    'Type'
   ]
 };

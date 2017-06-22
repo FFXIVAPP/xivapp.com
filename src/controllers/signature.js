@@ -108,6 +108,7 @@ const initialize = (server) => {
             platform
           } = request.query;
           const keyedIndex = `${patchVersion}-${platform}-${key}`;
+          Reflect.deleteProperty(request.payload, 'offset');
           DB.Signature.create({
             ...request.payload,
             patchVersion,
@@ -175,6 +176,7 @@ const initialize = (server) => {
             platform
           } = request.query;
           const keyedIndex = `${patchVersion}-${platform}-${key}`;
+          Reflect.deleteProperty(request.payload, 'offset');
           const $set = flatten({
             ...request.payload,
             patchVersion,
