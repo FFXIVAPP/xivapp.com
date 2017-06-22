@@ -27,7 +27,7 @@ const iteminfoSchema = new Schema({
   GlamourID: Number,
   IsHQ: Number
 }, {
-  strict: false,
+  strict: true,
   timestamps: {
     createdAt: 'created',
     updatedAt: 'updated'

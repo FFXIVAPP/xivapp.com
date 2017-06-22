@@ -26,7 +26,7 @@ const chatlogpointersSchema = new Schema({
   LogNext: Number,
   LogEnd: Number
 }, {
-  strict: false,
+  strict: true,
   timestamps: {
     createdAt: 'created',
     updatedAt: 'updated'

@@ -31,7 +31,7 @@ const signatureSchema = new Schema({
     String
   ]
 }, {
-  strict: false,
+  strict: true,
   timestamps: {
     createdAt: 'created',
     updatedAt: 'updated'

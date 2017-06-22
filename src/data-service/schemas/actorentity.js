@@ -66,7 +66,7 @@ const actorentitySchema = new Schema({
   DefaultStatOffset: Number,
   DefaultStatusEffectOffset: Number
 }, {
-  strict: false,
+  strict: true,
   timestamps: {
     createdAt: 'created',
     updatedAt: 'updated'

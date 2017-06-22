@@ -27,7 +27,7 @@ const targetinfoSchema = new Schema({
   CurrentID: Number,
   Size: Number
 }, {
-  strict: false,
+  strict: true,
   timestamps: {
     createdAt: 'created',
     updatedAt: 'updated'

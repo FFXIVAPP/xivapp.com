@@ -109,7 +109,7 @@ const playerentitySchema = new Schema({
   Gathering: Number,
   Perception: Number
 }, {
-  strict: false,
+  strict: true,
   timestamps: {
     createdAt: 'created',
     updatedAt: 'updated'

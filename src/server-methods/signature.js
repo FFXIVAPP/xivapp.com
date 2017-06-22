@@ -17,8 +17,7 @@ const initialize = ({
       keyedIndex: 0,
       created: 0,
       updated: 0,
-      latest: 0,
-      offset: 0
+      latest: 0
     };
     const latest = patchVersion === 'latest';
     const keyedIndex = `${patchVersion}-${platform}-${key}`;

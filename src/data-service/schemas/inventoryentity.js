@@ -21,7 +21,7 @@ const inventoryentitySchema = new Schema({
   }),
   Amount: Number
 }, {
-  strict: false,
+  strict: true,
   timestamps: {
     createdAt: 'created',
     updatedAt: 'updated'

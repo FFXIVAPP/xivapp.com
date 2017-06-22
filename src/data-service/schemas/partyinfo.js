@@ -21,7 +21,7 @@ const partyinfoSchema = new Schema({
   }),
   Size: Number
 }, {
-  strict: false,
+  strict: true,
   timestamps: {
     createdAt: 'created',
     updatedAt: 'updated'

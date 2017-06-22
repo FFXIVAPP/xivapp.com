@@ -24,7 +24,7 @@ const statusentrySchema = new Schema({
   Duration: Number,
   CasterID: Number
 }, {
-  strict: false,
+  strict: true,
   timestamps: {
     createdAt: 'created',
     updatedAt: 'updated'

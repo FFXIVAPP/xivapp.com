@@ -12,7 +12,7 @@ const userSchema = new Schema({
     default: 1
   }
 }, {
-  strict: false,
+  strict: true,
   timestamps: {
     createdAt: 'created',
     updatedAt: 'updated'

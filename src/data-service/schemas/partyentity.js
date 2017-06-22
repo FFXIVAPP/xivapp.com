@@ -32,7 +32,7 @@ const partyentitySchema = new Schema({
   MPMax: Number,
   DefaultStatusEffectOffset: Number
 }, {
-  strict: false,
+  strict: true,
   timestamps: {
     createdAt: 'created',
     updatedAt: 'updated'

@@ -22,7 +22,7 @@ const playerinfoSchema = new Schema({
   EnmityCount: Number,
   EnmityStructure: Number
 }, {
-  strict: false,
+  strict: true,
   timestamps: {
     createdAt: 'created',
     updatedAt: 'updated'
