@@ -44,7 +44,7 @@ module.exports = {
     'MAPINFO',
     'ZONEINFO',
     'PLAYERINFO',
-    'AGRO',
+    'AGROMAP',
     'AGRO_COUNT',
     'ENMITYMAP',
     'ENMITY_COUNT',
