@@ -19,7 +19,6 @@ const targetinfoSchema = new Schema({
   latest: indexed({
     type: Boolean
   }),
-  HateStructure: Number,
   MouseOver: Number,
   Focus: Number,
   Previous: Number,

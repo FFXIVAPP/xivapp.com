@@ -47,6 +47,7 @@ module.exports = {
     'AGRO',
     'AGRO_COUNT',
     'ENMITYMAP',
+    'ENMITY_COUNT',
     'PARTYCOUNT',
     'INVENTORY'
   ]

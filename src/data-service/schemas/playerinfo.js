@@ -18,9 +18,7 @@ const playerinfoSchema = new Schema({
   keyedIndex: unique(indexed(defaults.trimmedString())),
   latest: indexed({
     type: Boolean
-  }),
-  EnmityCount: Number,
-  EnmityStructure: Number
+  })
 }, {
   strict: true,
   timestamps: {
