@@ -29,7 +29,6 @@ module.exports = {
     'ItemInfo',
     'PartyInfo',
     'PartyEntity',
-    'PlayerInfo',
     'PlayerEntity',
     'TargetInfo',
     'StatusEntry',

@@ -9,7 +9,6 @@ const InventoryEntity = require('./schemas/inventoryentity.js');
 const ItemInfo = require('./schemas/iteminfo.js');
 const PartyInfo = require('./schemas/partyinfo.js');
 const PartyEntity = require('./schemas/partyentity.js');
-const PlayerInfo = require('./schemas/playerinfo.js');
 const PlayerEntity = require('./schemas/playerentity.js');
 const TargetInfo = require('./schemas/targetinfo.js');
 const Signature = require('./schemas/signature.js');
@@ -24,7 +23,6 @@ const SCHEMAS = {
   ItemInfo,
   PartyInfo,
   PartyEntity,
-  PlayerInfo,
   PlayerEntity,
   TargetInfo,
   Signature,
