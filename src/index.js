@@ -32,7 +32,7 @@ const server = new Server({
       isCaseSensitive: false,
       stripTrailingSlash: true
     },
-    compression: false,
+    compression: true,
     routes: {
       cors: {
         credentials: true
