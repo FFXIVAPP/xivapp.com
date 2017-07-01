@@ -29,7 +29,11 @@ exports.register = (plugin, options, next) => {
       routeLimit = settings.global;
     }
     if (routeLimit) {
-      const keyID = `${settings.namespace}:${request.info.remoteAddress}:${route.path}`;
+      let remoteAddress = request.info.remoteAddress;
+      if (process.env.NODE_ENV === 'production') {
+        remoteAddress = request.headers['x-forwarded-for'];
+      }
+      const keyID = `${settings.namespace}:${remoteAddress}:${route.path}`;
       const rateLimiter = new RateLimiter({
         id: keyID,
         db: redisClient,
