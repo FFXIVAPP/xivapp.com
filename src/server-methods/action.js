@@ -107,7 +107,7 @@ const initialize = ({
     cache: {
       cache: 'redisCache',
       expiresIn: 24 * 60 * 60 * 1000,
-      staleIn: 60 * 1000,
+      staleIn: 1 * 60 * 60 * 1000,
       segment,
       generateTimeout: 5000,
       staleTimeout: 1
