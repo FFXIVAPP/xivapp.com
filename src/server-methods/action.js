@@ -11,6 +11,11 @@ const columns = [
   'name_fr',
   'name_de',
   'name_cns',
+  'help_ja',
+  'help_en',
+  'help_fr',
+  'help_de',
+  'help_cns',
   'icon',
   'level',
   'classjob_category',
@@ -63,6 +68,14 @@ const initialize = ({
               French: action.name_fr,
               German: action.name_de,
               Japanese: action.name_ja
+            },
+            Help: {
+              Chinese: action.help_cns,
+              Korean: action.help_ko,
+              English: action.help_en,
+              French: action.help_fr,
+              German: action.help_de,
+              Japanese: action.help_ja
             },
             Icon: action.icon,
             Level: action.level,
