@@ -50,6 +50,10 @@ const columns = [
   'type'
 ];
 
+const ActionPotencyRegEx = /potency of (\d+)/gi;
+const ActionOverTimePotencyRegEx = /potency: ?(\d+)/gi;
+const DurationRegEx = /duration: ?(\d+)/gi;
+
 const initialize = ({
   server
 }) => {
@@ -60,7 +64,7 @@ const initialize = ({
       .then((actions) => {
         const response = {};
         actions.forEach((action) => {
-          response[action.id] = {
+          const mapped = {
             Name: {
               Chinese: action.name_cns,
               Korean: action.name_ko,
@@ -68,14 +72,6 @@ const initialize = ({
               French: action.name_fr,
               German: action.name_de,
               Japanese: action.name_ja
-            },
-            Help: {
-              Chinese: action.help_cns,
-              Korean: action.help_ko,
-              English: action.help_en,
-              French: action.help_fr,
-              German: action.help_de,
-              Japanese: action.help_ja
             },
             Icon: action.icon,
             Level: action.level,
@@ -108,8 +104,34 @@ const initialize = ({
             ActionTimelineUse: action.action_timeline_use,
             ActionData: action.action_data,
             EffectRange: action.effect_range,
-            Type: action.type
+            Type: action.type,
+            IsDamageOverTime: false,
+            HasInitialDamage: false
           };
+
+          const help = action.help_en;
+
+          const actionPotency = ActionPotencyRegEx.exec(help);
+          const actionOverTimePotency = ActionOverTimePotencyRegEx.exec(help);
+          const duration = DurationRegEx.exec(help);
+
+          if (actionPotency) {
+            mapped.Potency = parseInt(actionPotency[1], 10);
+          }
+          if (actionOverTimePotency) {
+            mapped.DOTPotency = parseInt(actionOverTimePotency[1], 10);
+          }
+          if (duration) {
+            mapped.Duration = parseFloat(duration[1]);
+          }
+          if (help.includes('damage over time') && actionOverTimePotency && duration) {
+            mapped.IsDamageOverTime = true;
+          }
+          if (action.name_en.includes('Bio')) {
+            mapped.HasInitialDamage = true;
+          }
+
+          response[action.id] = mapped;
         });
         process.nextTick(() => next(null, response));
       })
