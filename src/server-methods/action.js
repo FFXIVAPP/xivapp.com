@@ -110,7 +110,7 @@ const initialize = ({
             Duration: 0.0,
             IsHealingOverTime: false,
             IsDamageOverTime: false,
-            HasInitialDamage: false
+            HasNoInitialResult: false
           };
 
           const help = action.help_en;
@@ -128,14 +128,18 @@ const initialize = ({
           if (duration) {
             mapped.Duration = parseFloat(duration[1]);
           }
+
           if (help.includes('healing over time') && actionOverTimePotency && duration) {
             mapped.IsHealingOverTime = true;
           }
           if (help.includes('damage over time') && actionOverTimePotency && duration) {
             mapped.IsDamageOverTime = true;
           }
-          if (action.name_en.includes('Bio')) {
-            mapped.HasInitialDamage = true;
+
+          const actionName = action.name_en.toLowerCase();
+
+          if (actionName.includes('bio') || actionName.includes('regen') || actionName.includes('whispering')) {
+            mapped.HasNoInitialResult = true;
           }
 
           response[action.id] = mapped;
