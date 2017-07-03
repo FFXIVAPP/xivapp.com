@@ -105,6 +105,10 @@ const initialize = ({
             ActionData: action.action_data,
             EffectRange: action.effect_range,
             Type: action.type,
+            Potency: 0,
+            OverTimePotency: 0,
+            Duration: 0.0,
+            IsHealingOverTime: false,
             IsDamageOverTime: false,
             HasInitialDamage: false
           };
@@ -119,10 +123,13 @@ const initialize = ({
             mapped.Potency = parseInt(actionPotency[1], 10);
           }
           if (actionOverTimePotency) {
-            mapped.DOTPotency = parseInt(actionOverTimePotency[1], 10);
+            mapped.OverTimePotency = parseInt(actionOverTimePotency[1], 10);
           }
           if (duration) {
             mapped.Duration = parseFloat(duration[1]);
+          }
+          if (help.includes('healing over time') && actionOverTimePotency && duration) {
+            mapped.IsHealingOverTime = true;
           }
           if (help.includes('damage over time') && actionOverTimePotency && duration) {
             mapped.IsDamageOverTime = true;
