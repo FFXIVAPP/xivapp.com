@@ -172,7 +172,7 @@ module.exports = function (startServer = true) {
         title: 'XIVAPP',
         version: global.Pack.version
       },
-      schemes: ['http', 'https']
+      schemes: process.env.NODE_ENV === 'production' ? ['https'] : ['http']
     }
   }], (err) => {
     if (err) {
