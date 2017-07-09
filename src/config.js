@@ -34,8 +34,8 @@ module.exports = {
     'TargetInfo',
     'StatusEntry',
     'EnmityEntry',
-    'HotBarEntry',
-    'RecastEntry'
+    'HotBarEntity',
+    'RecastEntity'
   ],
   SignatureKeys: [
     'GAMEMAIN',
