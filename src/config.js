@@ -15,7 +15,8 @@ module.exports = {
   ],
   PatchVersions: [
     '3.45',
-    '3.50'
+    '3.5',
+    '4.0'
   ],
   Platforms: [
     'x86',
@@ -32,7 +33,9 @@ module.exports = {
     'PlayerEntity',
     'TargetInfo',
     'StatusEntry',
-    'EnmityEntry'
+    'EnmityEntry',
+    'HotBarEntry',
+    'RecastEntry'
   ],
   SignatureKeys: [
     'GAMEMAIN',
@@ -48,6 +51,8 @@ module.exports = {
     'ENMITYMAP',
     'ENMITY_COUNT',
     'PARTYCOUNT',
-    'INVENTORY'
+    'INVENTORY',
+    'HOTBAR',
+    'RECAST'
   ]
 };
