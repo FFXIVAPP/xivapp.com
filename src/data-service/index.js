@@ -15,6 +15,7 @@ const Signature = require('./schemas/signature.js');
 const StatusEntry = require('./schemas/statusentry.js');
 const EnmityEntry = require('./schemas/enmityentry.js');
 const HotBarEntity = require('./schemas/hotbarentity.js');
+const RecastEntity = require('./schemas/recastentity.js');
 const User = require('./schemas/user.js');
 
 const SCHEMAS = {
@@ -30,6 +31,7 @@ const SCHEMAS = {
   StatusEntry,
   EnmityEntry,
   HotBarEntity,
+  RecastEntity,
   User
 };
 
