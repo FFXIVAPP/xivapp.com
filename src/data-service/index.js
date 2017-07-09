@@ -14,6 +14,7 @@ const TargetInfo = require('./schemas/targetinfo.js');
 const Signature = require('./schemas/signature.js');
 const StatusEntry = require('./schemas/statusentry.js');
 const EnmityEntry = require('./schemas/enmityentry.js');
+const HotBarEntity = require('./schemas/hotbarentity.js');
 const User = require('./schemas/user.js');
 
 const SCHEMAS = {
@@ -28,6 +29,7 @@ const SCHEMAS = {
   Signature,
   StatusEntry,
   EnmityEntry,
+  HotBarEntity,
   User
 };
 
