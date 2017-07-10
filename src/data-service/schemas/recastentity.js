@@ -1,13 +1,13 @@
 const Mongoose = require('mongoose');
 const Schema = Mongoose.Schema;
 
-let RecastEntry = null;
+let RecastEntity = null;
 
 const defaults = require('../defaults.js');
 const indexed = defaults.indexed;
 const unique = defaults.unique;
 
-const recastentrySchema = new Schema({
+const recastentitySchema = new Schema({
   _id: defaults.guid(),
   v: {
     type: Number,
@@ -41,14 +41,14 @@ module.exports = function ({
   models,
   connection
 }) {
-  if (!RecastEntry) {
+  if (!RecastEntity) {
     if (!models) {
       throw new Error('models required');
     }
     if (!connection) {
       throw new Error('connection required');
     }
-    RecastEntry = connection.model('recastentry', recastentrySchema);
+    RecastEntity = connection.model('recastentity', recastentitySchema);
   }
-  return RecastEntry;
+  return RecastEntity;
 };
