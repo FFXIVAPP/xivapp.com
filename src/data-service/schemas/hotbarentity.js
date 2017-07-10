@@ -1,7 +1,7 @@
 const Mongoose = require('mongoose');
 const Schema = Mongoose.Schema;
 
-let StatusEntry = null;
+let HotBarEntry = null;
 
 const defaults = require('../defaults.js');
 const indexed = defaults.indexed;
@@ -34,14 +34,14 @@ module.exports = function ({
   models,
   connection
 }) {
-  if (!StatusEntry) {
+  if (!HotBarEntry) {
     if (!models) {
       throw new Error('models required');
     }
     if (!connection) {
       throw new Error('connection required');
     }
-    StatusEntry = connection.model('hotbarentity', hotbarentitySchema);
+    HotBarEntry = connection.model('hotbarentity', hotbarentitySchema);
   }
-  return StatusEntry;
+  return HotBarEntry;
 };
