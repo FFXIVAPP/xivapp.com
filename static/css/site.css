@@ -18,15 +18,15 @@ body {
   position: fixed;
   top: 50%;
   left: 50%;
-  margin-left: -172px;
-  margin-top: -55px;
-  width: 343px;
-  height: 110px;
+  margin-left: -200px;
+  margin-top: -88px;
+  width: 400px;
+  height: 175px;
 }
 
 .app img {
-  width: 343px;
-  height: 110px;
+  width: 400px;
+  height: 175px;
 }
 
 .row {
