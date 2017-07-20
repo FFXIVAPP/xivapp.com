@@ -11,7 +11,11 @@ const initialize = ({
   const segment = 'zone';
 
   server.method(segment, (id, next) => {
-    const promises = Config.Languages.map((language) => rest(`${Config.XIVDB.URL}/maps/get/layers/placename?language=${language}`, restOptions));
+    const promises = Config.Languages.map((language) => {
+      const URL = `${Config.XIVDB.URL}/maps/get/layers/placename?language=${language}`;
+      console.log(URL);
+      return rest(URL, restOptions);
+    });
     Promise.all(promises)
       .then((results) => {
         const response = {};
@@ -51,8 +55,8 @@ const initialize = ({
   }, {
     cache: {
       cache: 'redisCache',
-      expiresIn: 24 * 60 * 60 * 1000,
-      staleIn: 1 * 60 * 60 * 1000,
+      expiresIn: 30 * 24 * 60 * 60 * 1000,
+      staleIn: 24 * 60 * 60 * 1000,
       segment,
       generateTimeout: 5000,
       staleTimeout: 1

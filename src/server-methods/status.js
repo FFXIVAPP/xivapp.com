@@ -10,7 +10,9 @@ const initialize = ({
   const segment = 'status';
 
   server.method(segment, (id, next) => {
-    rest(`${global.Config.XIVDB.URL}/status`, restOptions)
+    const URL = `${global.Config.XIVDB.URL}/status`;
+    console.log(URL);
+    rest(URL, restOptions)
       .then((statuses) => {
         const response = {};
         statuses.forEach((status) => {
@@ -34,8 +36,8 @@ const initialize = ({
   }, {
     cache: {
       cache: 'redisCache',
-      expiresIn: 24 * 60 * 60 * 1000,
-      staleIn: 1 * 60 * 60 * 1000,
+      expiresIn: 30 * 24 * 60 * 60 * 1000,
+      staleIn: 24 * 60 * 60 * 1000,
       segment,
       generateTimeout: 5000,
       staleTimeout: 1

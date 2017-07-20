@@ -60,7 +60,9 @@ const initialize = ({
   const segment = 'action';
 
   server.method(segment, (id, next) => {
-    rest(`${Config.XIVDB.URL}/action?columns=${columns.join(',')}`, restOptions)
+    const URL = `${Config.XIVDB.URL}/action?columns=${columns.join(',')}`;
+    console.log(URL);
+    rest(URL, restOptions)
       .then((actions) => {
         const response = {};
         actions.forEach((action) => {
@@ -152,8 +154,8 @@ const initialize = ({
   }, {
     cache: {
       cache: 'redisCache',
-      expiresIn: 24 * 60 * 60 * 1000,
-      staleIn: 1 * 60 * 60 * 1000,
+      expiresIn: 30 * 24 * 60 * 60 * 1000,
+      staleIn: 24 * 60 * 60 * 1000,
       segment,
       generateTimeout: 5000,
       staleTimeout: 1
