@@ -4,34 +4,36 @@ const Promise = require('bluebird');
 let savedConnection = null;
 
 const ActorEntity = require('./schemas/actorentity.js');
+const ActorInfo = require('./schemas/actorinfo.js');
 const ChatLogPointers = require('./schemas/chatlogpointers.js');
+const EnmityEntry = require('./schemas/enmityentry.js');
+const HotBarEntity = require('./schemas/hotbarentity.js');
 const InventoryEntity = require('./schemas/inventoryentity.js');
 const ItemInfo = require('./schemas/iteminfo.js');
 const PartyInfo = require('./schemas/partyinfo.js');
 const PartyEntity = require('./schemas/partyentity.js');
 const PlayerEntity = require('./schemas/playerentity.js');
-const TargetInfo = require('./schemas/targetinfo.js');
+const RecastEntity = require('./schemas/recastentity.js');
 const Signature = require('./schemas/signature.js');
 const StatusEntry = require('./schemas/statusentry.js');
-const EnmityEntry = require('./schemas/enmityentry.js');
-const HotBarEntity = require('./schemas/hotbarentity.js');
-const RecastEntity = require('./schemas/recastentity.js');
+const TargetInfo = require('./schemas/targetinfo.js');
 const User = require('./schemas/user.js');
 
 const SCHEMAS = {
   ActorEntity,
+  ActorInfo,
   ChatLogPointers,
+  EnmityEntry,
+  HotBarEntity,
   InventoryEntity,
   ItemInfo,
   PartyInfo,
   PartyEntity,
   PlayerEntity,
-  TargetInfo,
+  RecastEntity,
   Signature,
   StatusEntry,
-  EnmityEntry,
-  HotBarEntity,
-  RecastEntity,
+  TargetInfo,
   User
 };
 

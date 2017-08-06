@@ -16,7 +16,7 @@ const initialize = (server) => {
         const query = {
           appID: Joi.string().guid().required(),
           patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.'),
-          platform: Joi.string().valid(Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
+          platform: Joi.string().valid(Config.Platforms).default('x64').required().description('Whether or not this is DX11 or DX9 based.')
         };
         return {
           params,

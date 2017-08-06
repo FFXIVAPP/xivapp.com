@@ -15,7 +15,7 @@ const initialize = (server) => {
       validate: {
         query: {
           patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.').default('latest'),
-          platform: Joi.string().valid(Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
+          platform: Joi.string().valid(Config.Platforms).default('x64').required().description('Whether or not this is DX11 or DX9 based.')
         }
       },
       handler: (request, reply) => {
@@ -42,7 +42,7 @@ const initialize = (server) => {
         },
         query: {
           patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.').default('latest'),
-          platform: Joi.string().valid(Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
+          platform: Joi.string().valid(Config.Platforms).default('x64').required().description('Whether or not this is DX11 or DX9 based.')
         }
       },
       handler: (request, reply) => {
@@ -72,8 +72,8 @@ const initialize = (server) => {
         };
         const query = {
           appID: Joi.string().guid().required(),
-          patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.').default('latest'),
-          platform: Joi.string().valid(Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
+          patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.'),
+          platform: Joi.string().valid(Config.Platforms).default('x64').required().description('Whether or not this is DX11 or DX9 based.')
         };
         const payload = {};
         Object.keys(DB.Signature.schema.paths).forEach((key) => {
@@ -139,8 +139,8 @@ const initialize = (server) => {
         };
         const query = {
           appID: Joi.string().guid().required(),
-          patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.').default('latest'),
-          platform: Joi.string().valid(Config.Platforms).default('x86').required().description('Whether or not this is DX11 or DX9 based.')
+          patchVersion: Joi.string().min(1).required().description('Patch version of the game into which this data applies.'),
+          platform: Joi.string().valid(Config.Platforms).default('x64').required().description('Whether or not this is DX11 or DX9 based.')
         };
         const payload = {};
         Object.keys(DB.Signature.schema.paths).forEach((key) => {

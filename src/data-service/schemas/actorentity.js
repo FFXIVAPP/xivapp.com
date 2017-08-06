@@ -56,6 +56,8 @@ const actorentitySchema = new Schema({
   GPMax: Number,
   CPCurrent: Number,
   CPMax: Number,
+  DifficultyRank: Number,
+  CombatFlags: Number,
   IsCasting1: Number,
   IsCasting2: Number,
   CastingID: Number,
