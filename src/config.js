@@ -25,6 +25,7 @@ module.exports = {
   StructureTypes: [
     'Unknown',
     'ActorEntity',
+    'ActorInfo',
     'ChatLogPointers',
     'InventoryEntity',
     'ItemInfo',
