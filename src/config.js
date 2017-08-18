@@ -1,59 +1,66 @@
 module.exports = {
-  mongo: {
-    host: '127.0.0.1'
+  PatchInfo: {
+    Signatures: 'https://raw.githubusercontent.com/Icehunter/sharlayan-signatures/master/patches.json',
+    Structures: 'https://raw.githubusercontent.com/Icehunter/sharlayan-structures/master/patches.json'
+  },
+  DataJSON: {
+    Signatures: 'https://raw.githubusercontent.com/Icehunter/sharlayan-signatures',
+    Structures: 'https://raw.githubusercontent.com/Icehunter/sharlayan-structures'
   },
   XIVDB: {
     URL: 'https://api.xivdb.com'
   },
-  Languages: [
-    'en',
-    'fr',
-    'de',
-    'ja',
-    'ko',
-    'cn'
-  ],
-  PatchVersions: [
-    '3.45',
-    '3.5',
-    '4.0'
-  ],
   Platforms: [
     'x86',
     'x64'
   ],
+  GameLanguages: [
+    'English',
+    'Japanese',
+    'French',
+    'German',
+    'Chinese',
+    'Korean'
+  ],
+  GameLanguagesShortCodes: [
+    'en',
+    'ja',
+    'fr',
+    'de',
+    'cn',
+    'ko'
+  ],
   StructureTypes: [
-    'Unknown',
     'ActorEntity',
     'ActorInfo',
     'ChatLogPointers',
-    'InventoryEntity',
-    'ItemInfo',
-    'PartyInfo',
-    'PartyEntity',
-    'PlayerEntity',
-    'TargetInfo',
-    'StatusEntry',
     'EnmityEntry',
     'HotBarEntity',
-    'RecastEntity'
+    'InventoryEntity',
+    'ItemInfo',
+    'PartyEntity',
+    'PartyInfo',
+    'PlayerEntity',
+    'RecastEntity',
+    'StatusEntry',
+    'TargetInfo'
   ],
   SignatureKeys: [
-    'GAMEMAIN',
-    'TARGET',
+    'AGRO_COUNT',
+    'AGROMAP',
     'CHATLOG',
     'CHARMAP',
-    'PARTYMAP',
-    'MAPINFO',
-    'ZONEINFO',
-    'PLAYERINFO',
-    'AGROMAP',
-    'AGRO_COUNT',
-    'ENMITYMAP',
     'ENMITY_COUNT',
-    'PARTYCOUNT',
-    'INVENTORY',
+    'ENMITYMAP',
+    'GAMEMAIN',
     'HOTBAR',
-    'RECAST'
+    'INVENTORY',
+    'MAPINFO',
+    'PARTYCOUNT',
+    'PARTYMAP',
+    'PLAYERINFO',
+    'RECAST',
+    'TARGET',
+    'ZONEINFO'
   ]
 };

@@ -16,7 +16,6 @@ global.Config = require('./config.js');
 global.Pack = require('../package.json');
 global.Helpers = require('./helpers/');
 
-const DataService = require('./data-service/');
 const controllers = require('./controllers/');
 const serverMethods = require('./server-methods/');
 
@@ -216,47 +215,33 @@ module.exports = function (startServer = true) {
           }
         });
 
-        const dataService = new DataService({
-          config: Config.mongo,
-          logger: serverLog
-        });
+        // SETUP SERVER METHODS
+        serverMethods.initialize(server);
 
-        dataService.ensureConnection()
-          .then((database) => {
-            global.DB = database;
+        // SETUP CONTROLLERS/ROUTES
+        controllers.initialize(server);
 
-            // SETUP SERVER METHODS
-            serverMethods.initialize(server);
+        if (startServer) {
+          server.decoder('special', (options) => Zlib.createGunzip(options));
 
-            // SETUP CONTROLLERS/ROUTES
-            controllers.initialize(server);
+          server.app.cache = new global.Helpers.Cache();
 
-            if (startServer) {
-              server.decoder('special', (options) => Zlib.createGunzip(options));
-
-              server.app.cache = new global.Helpers.Cache();
-
-              server.app.cache.start()
-                .then(() => {
-                  server.start((err) => {
-                    if (err) {
-                      serverLog('debug', 'startError');
-                      handleError(err, true);
-                      return;
-                    }
-                    console.log('Server Running @', server.info.uri);
-                  });
-                })
-                .catch((err) => {
-                  serverLog('debug', 'startCacheError');
+          server.app.cache.start()
+            .then(() => {
+              server.start((err) => {
+                if (err) {
+                  serverLog('debug', 'startError');
                   handleError(err, true);
-                });
-            }
-          })
-          .catch((err) => {
-            serverLog('debug', 'startDBError');
-            handleError(err, true);
-          });
+                  return;
+                }
+                console.log('Server Running @', server.info.uri);
+              });
+            })
+            .catch((err) => {
+              serverLog('debug', 'startCacheError');
+              handleError(err, true);
+            });
+        }
       })
       .catch((err) => {
         handleError(err, true);

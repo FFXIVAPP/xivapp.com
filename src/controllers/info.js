@@ -7,8 +7,8 @@ const initialize = (server) => {
       description: 'An object of supported API query parameters',
       handler: (request, reply) => {
         reply({
-          languages: Config.Languages,
-          gameVersions: Config.GameVersions
+          platform: Config.Platforms,
+          gameLanguage: Config.GameLanguages
         });
       }
     }

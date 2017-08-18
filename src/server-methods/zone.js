@@ -11,7 +11,7 @@ const initialize = ({
   const segment = 'zone';
 
   server.method(segment, (id, next) => {
-    const promises = Config.Languages.map((language) => {
+    const promises = Config.GameLanguagesShortCodes.map((language) => {
       const URL = `${Config.XIVDB.URL}/maps/get/layers/placename?language=${language}`;
       console.log(URL);
       return rest(URL, restOptions);
@@ -27,7 +27,7 @@ const initialize = ({
           ko: results[4].data,
           cn: results[5].data
         };
-        Config.Languages.forEach((language) => {
+        Config.GameLanguagesShortCodes.forEach((language) => {
           const places = maps[language];
           Object.keys(places).forEach((key) => {
             if (key !== '0') {

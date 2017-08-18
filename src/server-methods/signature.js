@@ -1,62 +1,43 @@
+const rest = require('request-promise');
+
+const restOptions = {
+  json: true
+};
+
 const initialize = ({
   server
 }) => {
   const segment = 'offset';
 
   server.method(segment, (id, {
-    patchVersion,
     platform,
-    key
+    gameLanguage
   }, next) => {
-    const ignoredFields = {
-      v: 0,
-      __v: 0,
-      _id: 0,
-      patchVersion: 0,
-      platform: 0,
-      keyedIndex: 0,
-      created: 0,
-      updated: 0,
-      latest: 0
-    };
-    const latest = patchVersion === 'latest';
-    const keyedIndex = `${patchVersion}-${platform}-${key}`;
-    if (key) {
-      if (DB.Signature) {
-        DB.Signature.findOne(latest ? {
-          platform,
-          Key: key,
-          latest
-        } : {
-          keyedIndex
-        }, ignoredFields, {
-          lean: true
-        }, (err, result) => {
-          process.nextTick(() => next(err, result));
-        });
-      } else {
-        process.nextTick(() => next());
-      }
-    } else {
-      DB.Signature.find(latest ? {
-        platform,
-        latest
-      } : {
-        patchVersion,
-        platform
-      }, ignoredFields, {
-        lean: true
-      }, (err, results) => {
-        if (err) {
-          return process.nextTick(() => next(err));
+    // Get Latest Patch Version by Language
+    const patchInfoURL = Config.PatchInfo.Signatures;
+    console.log(patchInfoURL);
+    rest(patchInfoURL, restOptions)
+      .then((patches) => {
+        const patchVersion = patches[gameLanguage];
+        if (patchVersion) {
+          // Get the data required from the patch version
+          const dataURL = `${Config.DataJSON.Signatures}/${patchVersion}/${platform}.json`;
+          console.log(dataURL);
+          return rest(dataURL, restOptions)
+            .then((signatures) => {
+              process.nextTick(() => next(null, signatures));
+            });
+        } else {
+          process.nextTick(() => next(new Error(`${gameLanguage} has no set patch version`)));
         }
-        return process.nextTick(() => next(null, results));
+      })
+      .catch((err) => {
+        process.nextTick(() => next(err));
       });
-    }
   }, {
     cache: {
       cache: 'redisCache',
-      expiresIn: 24 * 60 * 60 * 1000,
+      expiresIn: 30 * 24 * 60 * 60 * 1000,
       staleIn: 60 * 1000,
       segment,
       generateTimeout: 5000,

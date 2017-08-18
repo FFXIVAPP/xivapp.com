@@ -1,4 +1,8 @@
-const Promise = require('bluebird');
+const rest = require('request-promise');
+
+const restOptions = {
+  json: true
+};
 
 const initialize = ({
   server
@@ -6,76 +10,34 @@ const initialize = ({
   const segment = 'structure';
 
   server.method(segment, (id, {
-    patchVersion,
     platform,
-    type
+    gameLanguage
   }, next) => {
-    const ignoredFields = {
-      v: 0,
-      __v: 0,
-      _id: 0,
-      patchVersion: 0,
-      platform: 0,
-      keyedIndex: 0,
-      created: 0,
-      updated: 0,
-      latest: 0
-    };
-    const latest = patchVersion === 'latest';
-    if (type) {
-      const keyedIndex = `${patchVersion}-${platform}-${type}`;
-      if (DB[type]) {
-        DB[type].findOne(latest ? {
-          platform,
-          latest
-        } : {
-          keyedIndex
-        }, ignoredFields, {
-          lean: true
-        }, (err, result) => {
-          process.nextTick(() => next(err, result));
-        });
-      } else {
-        process.nextTick(() => next());
-      }
-    } else {
-      const promises = Config.StructureTypes.map((type) => {
-        if (DB[type]) {
-          return new Promise((resolve, reject) => {
-            const keyedIndex = `${patchVersion}-${platform}-${type}`;
-            DB[type].findOne(latest ? {
-              platform,
-              latest
-            } : {
-              keyedIndex
-            }, ignoredFields, {
-              lean: true
-            }, (err, result) => {
-              if (err) {
-                return reject(err);
-              }
-              return resolve(result);
+    // Get Latest Patch Version by Language
+    const patchInfoURL = Config.PatchInfo.Structures;
+    console.log(patchInfoURL);
+    rest(patchInfoURL, restOptions)
+      .then((patches) => {
+        const patchVersion = patches[gameLanguage];
+        if (patchVersion) {
+          // Get the data required from the patch version
+          const dataURL = `${Config.DataJSON.Structures}/${patchVersion}/${platform}.json`;
+          console.log(dataURL);
+          return rest(dataURL, restOptions)
+            .then((signatures) => {
+              process.nextTick(() => next(null, signatures));
             });
-          });
+        } else {
+          process.nextTick(() => next(new Error(`${gameLanguage} has no set patch version`)));
         }
-        return Promise.resolve({});
+      })
+      .catch((err) => {
+        process.nextTick(() => next(err));
       });
-      Promise.all(promises)
-        .then((results) => {
-          const response = {};
-          Config.StructureTypes.forEach((type, i) => {
-            response[type] = results[i];
-          });
-          process.nextTick(() => next(null, response));
-        })
-        .catch((err) => {
-          process.nextTick(() => next(err));
-        });
-    }
   }, {
     cache: {
       cache: 'redisCache',
-      expiresIn: 24 * 60 * 60 * 1000,
+      expiresIn: 30 * 24 * 60 * 60 * 1000,
       staleIn: 60 * 1000,
       segment,
       generateTimeout: 5000,
