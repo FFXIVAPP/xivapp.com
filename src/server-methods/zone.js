@@ -21,11 +21,11 @@ const initialize = ({
         const response = {};
         const maps = {
           en: results[0].data,
-          fr: results[1].data,
-          de: results[2].data,
-          ja: results[3].data,
-          ko: results[4].data,
-          cn: results[5].data
+          ja: results[1].data,
+          fr: results[2].data,
+          de: results[3].data,
+          cn: results[4].data,
+          ko: results[5].data
         };
         Config.GameLanguagesShortCodes.forEach((language) => {
           const places = maps[language];
