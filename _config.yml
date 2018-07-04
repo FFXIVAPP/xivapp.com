@@ -1,7 +1,7 @@
 # Setup
 name: XIVAPP
 description: Where the community comes to play!
-baseurl: ""
+baseurl: "https://ffxivapp.github.io/xivapp.com/"
 locale: "en-US"
 theme: jekyll-theme-architect
 
