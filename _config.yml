@@ -1,0 +1,12 @@
+# Setup
+name: XIVAPP
+description: Where the community comes to play!
+baseurl: ""
+locale: "en-US"
+
+# Gems
+gems:
+  - jekyll-paginate
+
+#Others
+markdown: kramdown
