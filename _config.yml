@@ -3,7 +3,7 @@ name: XIVAPP
 description: Where the community comes to play!
 baseurl: ""
 locale: "en-US"
-theme: Architect
+theme: jekyll-theme-architect
 
 # Gems
 gems:
@@ -11,5 +11,3 @@ gems:
 
 #Others
 markdown: kramdown
-
-theme: jekyll-theme-architect
