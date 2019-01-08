@@ -7,7 +7,26 @@ title: XIVAPP
 
 ![](images/highlights.jpg)
 
+<p>This is the latest release of main application; the memory offsets are updated on each patch by the community:</p>
 <span id="release-info"></span>
+
+# Notice
+
+I'm getting out of the development process for FFXIV. I have the following domains which are up for sale and I'm taking offers.
+
+- [XIVCHAT](https://xivchat.com)
+- [XIVLOGS](https://xivlogs.com)
+- [XIVMARKET](https://xivmarket.com)
+- [XIV-MARKET](https://xiv-market.com)
+- [XIVWIKI](https://xivwiki.com)
+
+I'm considering the following as well:
+
+- [FFXIVAPP](https://ffxivapp.com)
+- [FFXIV-APP](https://ffxiv-app.com)
+- [XIVAPP](https://xivapp.com)
+
+You can contact me via GitHub (email on profile) or [Twitter](https://twitter.com/SyndicatedLife)
 
 # Installation
 
@@ -34,6 +53,7 @@ It allows the user to make events that can use TTS, program execution and sound 
 <div style="clear: both;"></div>
 
 ## Log
+
 [![](/images/logos/log.png){: .image-left .image-box .image-64 }](/plugins/log/)
 The log plugin has it's humble beginnings back in XI and now is working with Final Fantasy XIV.
 
