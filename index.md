@@ -12,19 +12,14 @@ title: XIVAPP
 
 # Notice
 
-I'm getting out of the development process for FFXIV. I have the following domains which are up for sale and I'm taking offers.
+I'm getting out of the development process for FFXIV. I have the following domains. Does anyone want to take them over?
 
 - [XIVCHAT](https://xivchat.com)
 - [XIVLOGS](https://xivlogs.com)
 - [XIVMARKET](https://xivmarket.com)
 - [XIV-MARKET](https://xiv-market.com)
-- [XIVWIKI](https://xivwiki.com)
-
-I'm considering the following as well:
-
 - [FFXIVAPP](https://ffxivapp.com)
 - [FFXIV-APP](https://ffxiv-app.com)
-- [XIVAPP](https://xivapp.com)
 
 You can contact me via GitHub (email on profile) or [Twitter](https://twitter.com/SyndicatedLife)
 
