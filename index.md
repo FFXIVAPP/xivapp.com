@@ -16,8 +16,6 @@ I'm getting out of the development process for FFXIV. I have the following domai
 
 - [XIVCHAT](https://xivchat.com)
 - [XIVLOGS](https://xivlogs.com)
-- [XIVMARKET](https://xivmarket.com)
-- [XIV-MARKET](https://xiv-market.com)
 - [FFXIVAPP](https://ffxivapp.com)
 - [FFXIV-APP](https://ffxiv-app.com)
 
