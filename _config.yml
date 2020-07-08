@@ -4,6 +4,7 @@ description: Where the community comes to play!
 baseurl: ""
 locale: "en-US"
 theme: jekyll-theme-architect
+google_analytics: UA-28183147-9
 
 # Gems
 gems:
